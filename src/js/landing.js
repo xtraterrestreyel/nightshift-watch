@@ -12,9 +12,18 @@ makeFlakes();
 document.getElementById('year').textContent = new Date().getFullYear();
 document.querySelectorAll('[data-annual-months]').forEach(el => { el.textContent = PRICING.annualMonthsPaid; });
 
-const phone = document.getElementById('salesPhone');
-phone.textContent = CONFIG.salesPhone;
-phone.href = 'tel:' + CONFIG.salesPhone.replace(/[^0-9+]/g, '');
+// Footer contact: email only unless a phone number is set in config.js
+const contact = document.getElementById('contactLink');
+if (contact) {
+  const phoneNum = String(CONFIG.salesPhone || '').trim();
+  if (phoneNum) {
+    contact.textContent = 'Call ' + phoneNum;
+    contact.href = 'tel:' + phoneNum.replace(/[^0-9+]/g, '');
+  } else {
+    contact.textContent = CONFIG.salesEmail;
+    contact.href = 'mailto:' + CONFIG.salesEmail;
+  }
+}
 
 // ---------- Live temperature in the hero card ----------
 (function heroChart() {
@@ -137,5 +146,5 @@ form.addEventListener('submit', (e) => {
   window.location.href = 'mailto:' + CONFIG.salesEmail +
     '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   msg.className = 'form-msg ok';
-  msg.textContent = 'Your email app should open with your quote filled in. Hit send and we will call you within one business day.';
+  msg.textContent = 'Your email app should open with your quote filled in. Hit send and we will get back to you within one business day.';
 });

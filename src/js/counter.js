@@ -1,70 +1,128 @@
-// Public visitor counter. Talks to the nightshift-api server on Render.
-// Stays hidden until CONFIG.apiBaseUrl is set in config.js.
+// Public visitor counter in the footer, with a rotating dot globe on hover or tap.
+// Talks to the nightshift-api Worker on Cloudflare. Hidden until CONFIG.apiBaseUrl is set.
 import { CONFIG } from './config.js';
+import { STATE_CENTERS, COUNTRY_CENTERS } from './places.js';
 
 const ORDER = ['Midwest', 'South', 'West', 'Northeast', 'Outside the US', 'Unknown'];
 const LABEL = { 'Unknown': 'Location unknown' };
 const fmt = (n) => Number(n || 0).toLocaleString('en-US');
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-function render(box, data) {
-  const total = data.total || 0;
+// Add ?globePreview to the page address to see the globe filled with sample data.
+const PREVIEW = (() => { try { return new URLSearchParams(location.search).has('globePreview'); } catch (e) { return false; } })();
+const SAMPLE = {
+  total: 312,
+  regions: [{ region: 'Midwest', n: 168 }, { region: 'South', n: 71 }, { region: 'West', n: 38 }, { region: 'Northeast', n: 21 }, { region: 'Outside the US', n: 14 }],
+  states: [{ state: 'Illinois', n: 121 }, { state: 'Indiana', n: 22 }, { state: 'Texas', n: 31 }, { state: 'Georgia', n: 18 }, { state: 'California', n: 20 },
+    { state: 'Ohio', n: 15 }, { state: 'New York', n: 13 }, { state: 'Florida', n: 12 }, { state: 'Washington', n: 9 }, { state: 'Colorado', n: 6 }],
+  countries: [{ country: 'US', n: 298 }, { country: 'CA', n: 5 }, { country: 'GB', n: 4 }, { country: 'NG', n: 3 }, { country: 'IN', n: 2 }]
+};
+
+let data = null;
+let globe = null;
+let globeLoading = null;
+
+function countryName(code) {
+  try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code; } catch (e) { return code; }
+}
+
+function globeTargets(d) {
+  const out = [];
+  const states = d.states || d.topStates || [];
+  states.forEach(s => { const c = STATE_CENTERS[s.state]; if (c) out.push({ lat: c[0], lng: c[1], count: s.n }); });
+  (d.countries || []).forEach(c => {
+    if (c.country === 'US') return; // US visitors light up their states instead
+    const p = COUNTRY_CENTERS[c.country];
+    if (p) out.push({ lat: p[0], lng: p[1], count: c.n });
+  });
+  return out;
+}
+
+function renderText(box, d) {
+  const total = d.total || 0;
   box.querySelector('[data-vc-total]').textContent = fmt(total);
-  box.querySelector('[data-vc-word]').textContent = total === 1 ? 'person has' : 'people have';
+  box.querySelector('[data-vc-word]').textContent = total === 1 ? 'visitor' : 'visitors';
   const byName = {};
-  (data.regions || []).forEach(r => { byName[r.region || 'Unknown'] = r.n; });
-  const rows = ORDER.filter(name => byName[name]).map(name => {
-    const pct = total ? Math.round(byName[name] / total * 100) : 0;
-    return `<li><span class="vc-name">${esc(LABEL[name] || name)}</span>
-      <span class="vc-bar"><i style="width:${Math.max(pct, 2)}%"></i></span>
-      <span class="vc-pct">${pct}%</span></li>`;
-  }).join('');
-  box.querySelector('[data-vc-regions]').innerHTML = rows || '<li class="vc-empty">Region data is on its way.</li>';
-  const states = (data.topStates || []).map(s => `${esc(s.state)} (${fmt(s.n)})`).join(', ');
-  box.querySelector('[data-vc-states]').textContent = states ? 'Top states: ' + states : '';
+  (d.regions || []).forEach(r => { byName[r.region || 'Unknown'] = r.n; });
+  box.querySelector('[data-vc-regions]').innerHTML = ORDER.filter(n => byName[n]).map(n => {
+    const pct = total ? Math.round(byName[n] / total * 100) : 0;
+    return `<li><span class="vc-name">${esc(LABEL[n] || n)}</span><span class="vc-bar"><i style="width:${Math.max(pct, 2)}%"></i></span><span class="vc-pct">${pct}%</span></li>`;
+  }).join('') || '<li class="vc-empty">Region data is on its way.</li>';
+  const states = (d.states || d.topStates || []).slice().sort((x, y) => y.n - x.n).slice(0, 5).map(s => `${esc(s.state)} (${fmt(s.n)})`).join(', ');
+  const abroad = (d.countries || []).filter(c => c.country !== 'US').slice(0, 3).map(c => `${esc(countryName(c.country))} (${fmt(c.n)})`).join(', ');
+  box.querySelector('[data-vc-states]').textContent = [states && 'Top states: ' + states, abroad && 'Abroad: ' + abroad].filter(Boolean).join(' \u00b7 ');
+  box.querySelector('[data-vc-preview]').hidden = !PREVIEW;
+}
+
+function openGlobe(box) {
+  const canvas = box.querySelector('[data-vc-globe]');
+  const note = box.querySelector('[data-vc-loading]');
+  if (globe) { globe.setTargets(globeTargets(data)); globe.start(); return; }
+  if (!globeLoading) {
+    note.hidden = false;
+    globeLoading = import('./globe.js').then(m => {
+      const size = window.innerWidth <= 520 ? 220 : 250;
+      globe = m.createGlobe(canvas, size);
+      note.hidden = true;
+      return globe;
+    }).catch(() => { note.textContent = 'The globe could not load right now.'; });
+  }
+  globeLoading.then(g => {
+    if (g && box.classList.contains('open')) { g.setTargets(globeTargets(data)); g.start(); }
+  });
 }
 
 export function initVisitorCounter() {
   const box = document.querySelector('[data-visitor-counter]');
   if (!box) return;
   const base = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '');
-  if (!base) return; // no server yet: keep the counter hidden
+  if (!base && !PREVIEW) return;
 
-  let vid = null;
-  try {
-    vid = localStorage.getItem('nightshift.vid');
-    if (!vid) {
-      vid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2, 12);
-      localStorage.setItem('nightshift.vid', vid);
-    }
-  } catch (e) { /* storage blocked: the server counts once per day instead */ }
+  const show = (d) => { data = d; renderText(box, d); box.hidden = false; };
 
-  let counted = false;
-  try { counted = sessionStorage.getItem('nightshift.counted') === '1'; } catch (e) { /* ignore */ }
+  if (PREVIEW) {
+    show(SAMPLE);
+  } else {
+    let vid = null;
+    try {
+      vid = localStorage.getItem('nightshift.vid');
+      if (!vid) {
+        vid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2, 12);
+        localStorage.setItem('nightshift.vid', vid);
+      }
+    } catch (e) { /* storage blocked: the server counts once per day instead */ }
+    let counted = false;
+    try { counted = sessionStorage.getItem('nightshift.counted') === '1'; } catch (e) { /* ignore */ }
+    const req = counted
+      ? fetch(base + '/api/stats')
+      : fetch(base + '/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(vid ? { vid } : {}) });
+    req.then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(d => { try { sessionStorage.setItem('nightshift.counted', '1'); } catch (e) { /* ignore */ } show(d); })
+      .catch(() => { /* server unavailable: stay hidden */ });
+  }
 
-  const req = counted
-    ? fetch(base + '/api/stats')
-    : fetch(base + '/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(vid ? { vid } : {}) });
-
-  req.then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-    .then(data => {
-      try { sessionStorage.setItem('nightshift.counted', '1'); } catch (e) { /* ignore */ }
-      render(box, data);
-      box.hidden = false;
-    })
-    .catch(() => { /* server unavailable: stay hidden */ });
-
-  // Hover works on desktop; tap toggles on phones.
+  // Desktop: hover opens. Phones: tap toggles.
   const btn = box.querySelector('.vc-btn');
+  const canHover = () => { try { return matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) { return false; } };
+  let closeTimer = null;
+  const open = () => {
+    clearTimeout(closeTimer);
+    if (box.classList.contains('open') || !data) return;
+    const rect = box.getBoundingClientRect();
+    box.classList.toggle('align-right', rect.left + rect.width / 2 > window.innerWidth / 2);
+    box.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
+    openGlobe(box);
+  };
+  const close = () => {
+    box.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
+    if (globe) globe.stop();
+  };
+  box.addEventListener('mouseenter', () => { if (canHover()) open(); });
+  box.addEventListener('mouseleave', () => { if (canHover()) { clearTimeout(closeTimer); closeTimer = setTimeout(close, 180); } });
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const open = box.classList.toggle('open');
-    btn.setAttribute('aria-expanded', String(open));
+    if (canHover()) open(); else if (box.classList.contains('open')) close(); else open();
   });
-  document.addEventListener('click', (e) => {
-    if (!box.contains(e.target)) { box.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { box.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-  });
+  document.addEventListener('pointerdown', (e) => { if (!box.contains(e.target)) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 }

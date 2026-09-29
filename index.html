@@ -6,6 +6,7 @@
   <script>try { if (localStorage.getItem('nightshift.theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}</script>
   <title>ColdCheck by COOKd Kitchen | Cooler and freezer alerts for restaurants</title>
   <meta name="description" content="ColdCheck, aka Night Shift, texts restaurant owners the moment a cooler or freezer leaves the safe zone and keeps inspection logs automatically.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
@@ -55,18 +56,6 @@
             <li>You own the equipment</li>
             <li>No long-term contract</li>
           </ul>
-          <div class="visitors" data-visitor-counter hidden>
-            <button class="vc-btn" type="button" aria-expanded="false" aria-describedby="vcPop">
-              <span class="pulse" aria-hidden="true"></span>
-              <span><b data-vc-total>0</b> <span data-vc-word>people have</span> visited Night Shift</span>
-              <svg class="vc-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
-            <div class="vc-pop" id="vcPop" role="tooltip">
-              <h4>Where our visitors are from</h4>
-              <ul class="vc-list" data-vc-regions></ul>
-              <p class="vc-states" data-vc-states></p>
-              <p class="vc-note">Counted by region only. We never store IP addresses or anything that identifies you.</p>
-            </div>
           </div>
         </div>
 
@@ -233,7 +222,7 @@
         <div class="quote-wrap">
           <div class="section-head">
             <h2>Get your quote</h2>
-            <p>Send us your details and we'll confirm your quote, answer your questions by phone or video call, and send a secure payment link. No payment until you approve your quote.</p>
+            <p>Send us your details and we'll confirm your quote, answer your questions, and send a secure payment link. No payment until you approve your quote.</p>
             <p class="quote-summary" id="quoteSummary"></p>
           </div>
           <form class="glass trial-form" id="trial" novalidate>
@@ -283,7 +272,25 @@
     <footer class="site-foot">
       <div class="wrap">
         <span>Part of the <b>COOKd Kitchen</b> family. &copy; <span id="year"></span> ColdCheck</span>
-        <span>Questions? Call <a id="salesPhone" href="#">us</a></span>
+        <div class="visitors" data-visitor-counter hidden>
+          <button class="vc-btn" type="button" aria-expanded="false" aria-haspopup="dialog">
+            <span class="pulse" aria-hidden="true"></span>
+            <b data-vc-total>0</b> <span data-vc-word>visitors</span>
+            <svg class="vc-globe-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>
+          </button>
+          <div class="vc-pop" role="dialog" aria-label="Where visitors are from">
+            <h4>Where visitors are from</h4>
+            <p class="vc-preview" data-vc-preview hidden>Preview: sample data, not real visitors</p>
+            <div class="vc-globe-wrap">
+              <canvas data-vc-globe aria-hidden="true"></canvas>
+              <span class="vc-loading" data-vc-loading hidden>Loading the globe...</span>
+            </div>
+            <ul class="vc-list" data-vc-regions></ul>
+            <p class="vc-states" data-vc-states></p>
+            <p class="vc-note">Counted by state and country only. We never store IP addresses or anything that identifies you.</p>
+          </div>
+        </div>
+        <span>Questions? <a id="contactLink" href="#">Email us</a></span>
       </div>
     </footer>
   </div>

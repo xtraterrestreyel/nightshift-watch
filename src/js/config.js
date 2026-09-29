@@ -6,7 +6,7 @@ export const CONFIG = {
 
   // Where free-trial requests from the landing page are sent
   salesEmail: 'quote@nightshift.watch',
-  salesPhone: '(555) 010-0100',
+  salesPhone: '',
 
   // Monthly price per location, shown on the landing page
   pricePerMonth: 99,
