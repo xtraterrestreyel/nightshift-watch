@@ -1,5 +1,8 @@
 import { login, startDemo, getSession } from './auth.js';
+import { initThemeToggle } from './theme.js';
 import { makeFlakes } from './effects.js';
+
+initThemeToggle();
 
 if (getSession()) window.location.replace('./dashboard.html');
 makeFlakes();

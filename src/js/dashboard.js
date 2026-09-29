@@ -1,6 +1,9 @@
 import { CONFIG } from './config.js';
+import { initThemeToggle } from './theme.js';
 import { getSession, startDemo, logout } from './auth.js';
 import { createInventory } from './inventory.js';
+
+initThemeToggle();
 
 const params = new URLSearchParams(window.location.search);
 if (params.get('demo') === '1') startDemo();

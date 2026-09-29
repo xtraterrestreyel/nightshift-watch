@@ -2,8 +2,8 @@
    COOKd Kitchen theme: "Deep Water"
    BRAND colors: swap these to restyle buttons and highlights.
    TEMPERATURE colors: keep these (blue = cold/safe, red = alarm).
-   Dark is the default look. A light "frost" version is used
-   automatically when the device is set to light mode.
+   Dark is the default look on every device. Visitors can switch to the
+   light "frost" version with the sun/moon button; their choice is remembered.
    ========================================================= */
 :root {
   /* ---- BRAND ---- */
@@ -43,20 +43,6 @@
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --brand: #1467B3; --brand-contrast: #FFFFFF; --accent: #1467B3;
-    --glacier: #5FA8EC; --ice: #9ED8FF;
-    --bg: #EEF4FA; --deep: #E4EEF8; --surface: #FFFFFF;
-    --ink: #0A1A2B; --ink-soft: #56708A; --line: rgba(20, 70, 130, 0.14);
-    --shadow: 0 16px 36px rgba(20, 60, 110, 0.10);
-    --temp-safe: #1579C7; --temp-safe-bg: rgba(21, 121, 199, 0.10);
-    --temp-watch: #A4650C; --temp-watch-bg: rgba(164, 101, 12, 0.12);
-    --temp-alarm: #D33A36; --temp-alarm-bg: rgba(211, 58, 54, 0.11);
-    --rail: #9FB3C6;
-    color-scheme: light;
-  }
-}
 :root[data-theme="light"] {
   --brand: #1467B3; --brand-contrast: #FFFFFF; --accent: #1467B3;
   --glacier: #5FA8EC; --ice: #9ED8FF;
@@ -69,3 +55,25 @@
   --rail: #9FB3C6;
   color-scheme: light;
 }
+
+/* ---------- Light theme: keep the background effects visible ---------- */
+:root[data-theme="light"] .o1 { opacity: .30; }
+:root[data-theme="light"] .o2 { opacity: .22; }
+:root[data-theme="light"] .o3 { opacity: .16; }
+:root[data-theme="light"] .flake { background: var(--glacier); }
+:root[data-theme="light"] .frost {
+  background-image: radial-gradient(color-mix(in srgb, var(--glacier) 26%, transparent) 1px, transparent 1.6px);
+}
+
+/* ---------- Light / dark toggle button ---------- */
+.theme-toggle {
+  width: 40px; height: 40px; flex: none; display: inline-grid; place-items: center;
+  border-radius: 12px; border: 1px solid var(--line); cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 55%, transparent); color: var(--ink);
+  transition: border-color .2s, background-color .2s;
+}
+.theme-toggle:hover { border-color: color-mix(in srgb, var(--brand) 55%, transparent); }
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle .moon { display: none; }
+:root[data-theme="light"] .theme-toggle .sun { display: none; }
+:root[data-theme="light"] .theme-toggle .moon { display: block; }

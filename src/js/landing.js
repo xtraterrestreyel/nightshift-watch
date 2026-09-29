@@ -1,6 +1,9 @@
 import { CONFIG } from './config.js';
+import { initThemeToggle } from './theme.js';
 import { PRICING } from './pricing.js';
 import { makeFlakes } from './effects.js';
+
+initThemeToggle();
 
 makeFlakes();
 
