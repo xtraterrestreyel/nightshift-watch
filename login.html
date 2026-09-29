@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Log in | ColdCheck by COOKd Kitchen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/theme.css">
+  <link rel="stylesheet" href="./src/styles/base.css">
+  <link rel="stylesheet" href="./src/styles/modern.css">
+  <link rel="stylesheet" href="./src/styles/auth.css">
+</head>
+<body class="site">
+  <div class="bg" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    <div class="frost"></div>
+    <div id="flakes"></div>
+  </div>
+
+  <div class="site-wrap">
+    <header class="glass-nav">
+      <div class="wrap inner">
+        <a class="brand-link" href="./index.html">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></span>
+          <span><b>COOKd Kitchen</b><small>ColdCheck</small></span>
+        </a>
+        <nav class="nav-links"><a class="btn-m btn-glass btn-sm" href="./index.html#pricing">Get a quote</a></nav>
+      </div>
+    </header>
+
+    <main class="wrap auth">
+      <form class="glass auth-card" id="loginForm" novalidate>
+        <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></span>
+        <h1>Welcome back</h1>
+        <p>Log in to check on your coolers from anywhere.</p>
+        <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+        <label class="field"><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn-m btn-ice full" type="submit">Log in</button>
+        <p class="form-msg" id="loginMsg" role="status"></p>
+        <div class="divider"><span>or</span></div>
+        <button class="btn-m btn-glass full" type="button" id="demoBtn">Try the live demo</button>
+        <p class="form-note small">New to ColdCheck? <a href="./index.html#pricing">Build your quote</a>.</p>
+      </form>
+    </main>
+  </div>
+
+  <script type="module" src="./src/js/login.js"></script>
+</body>
+</html>

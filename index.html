@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ColdCheck by COOKd Kitchen | Cooler and freezer alerts for restaurants</title>
+  <meta name="description" content="ColdCheck, aka Night Shift, texts restaurant owners the moment a cooler or freezer leaves the safe zone and keeps inspection logs automatically.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/theme.css">
+  <link rel="stylesheet" href="./src/styles/base.css">
+  <link rel="stylesheet" href="./src/styles/modern.css">
+  <link rel="stylesheet" href="./src/styles/landing.css">
+</head>
+<body class="site">
+  <div class="bg" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    <div class="frost"></div>
+    <div id="flakes"></div>
+  </div>
+
+  <div class="site-wrap">
+    <header class="glass-nav">
+      <div class="wrap inner">
+        <a class="brand-link" href="./index.html">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></span>
+          <span><b>COOKd Kitchen</b><small>ColdCheck</small></span>
+        </a>
+        <nav class="nav-links">
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="./login.html">Log in</a>
+          <a class="btn-m btn-ice btn-sm" href="#quote">Get a quote</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="wrap hero">
+        <div class="hero-copy">
+          <span class="pill"><span class="pulse"></span>Meet Night Shift, your overnight kitchen watch</span>
+          <h1>Your coolers,<br>watched all night.</h1>
+          <p class="lead">ColdCheck texts you the moment a cooler, freezer, or hot well leaves the safe zone, and writes your inspection logs for you. No clipboards. No 3 a.m. surprises.</p>
+          <div class="ctas">
+            <a class="btn-m btn-ice" href="./dashboard.html?demo=1">See the live demo</a>
+            <a class="btn-m btn-glass" href="#pricing">Build your quote</a>
+          </div>
+          <ul class="hero-points">
+            <li>Arrives preconfigured</li>
+            <li>You own the equipment</li>
+            <li>No long-term contract</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual" aria-label="Example of the ColdCheck app">
+          <div class="glass unit-demo">
+            <div class="ud-head"><span>Walk-in cooler</span><span class="chip">Safe</span></div>
+            <div class="ud-temp"><span id="heroTemp">37.2</span><small>&deg;F</small></div>
+            <svg class="ud-spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".35"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
+              <path id="heroArea" fill="url(#hg)"/>
+              <line x1="0" x2="300" y1="18" y2="18"/>
+              <polyline id="heroLine"/>
+            </svg>
+            <div class="ud-foot"><span>Safe at 41&deg;F or below</span></div>
+          </div>
+
+          <div class="glass notif-demo">
+            <div class="nd-top"><b>ColdCheck</b><span>3:06 AM</span></div>
+            <p>Walk-in cooler is at 46.1&deg;F and rising. About $6,200 of food at risk.</p>
+          </div>
+
+          <div class="ticket hero-ticket">
+            <div class="t-head"><span class="hot">ALERT #0147</span><span>3:06 AM</span></div>
+            <p><b>Walk-in cooler</b></p>
+            <div class="t-temp">46.1&deg;F</div>
+            <p>Texted: Maria R. (owner)</p>
+            <span class="stamp">HANDLED 3:09 AM</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Who it's for -->
+      <section class="wrap made-for">
+        <span>Built for independent kitchens</span>
+        <ul><li>Pizzerias</li><li>Taquerias</li><li>Diners</li><li>Bakeries</li><li>Bars</li><li>Food trucks</li></ul>
+      </section>
+
+      <!-- Problem -->
+      <section class="wrap section">
+        <div class="section-head">
+          <h2>The 3 a.m. problem</h2>
+          <p>A walk-in can fail after close, and nobody finds out until the morning crew opens the door. By then the food is gone, and the log on the clipboard is blank or guessed.</p>
+        </div>
+        <div class="stat-row">
+          <div class="glass stat-card"><strong class="red">$5k to $15k</strong><span>of food lost when a walk-in fails overnight</span></div>
+          <div class="glass stat-card"><strong>41&deg;F</strong><span>the line cold food can't cross for long</span></div>
+          <div class="glass stat-card"><strong>0</strong><span>clipboards you need with ColdCheck</span></div>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="wrap section" id="how">
+        <div class="section-head">
+          <h2>Set it up yourself, the same day it arrives</h2>
+          <p>We preconfigure everything before it ships. You plug in the gateway and place the sensors, and we can walk you through it on a call.</p>
+        </div>
+        <ol class="steps">
+          <li class="glass"><span class="num">1</span><h3>Place the sensors</h3><p>Your kit arrives already registered to your account. Mount each sensor outside the unit and run its thin probe inside along the door seal. No wiring and no downtime.</p></li>
+          <li class="glass"><span class="num">2</span><h3>Night Shift keeps watch</h3><p>Readings come in every few minutes. If a unit drifts out of range, your team gets a text and an email right away.</p></li>
+          <li class="glass"><span class="num">3</span><h3>Your logs write themselves</h3><p>Every reading is saved as an inspection-ready log you can print or pull up when the inspector walks in.</p></li>
+        </ol>
+      </section>
+
+      <!-- Features -->
+      <section class="wrap section" id="features">
+        <div class="section-head">
+          <h2>Everything your kitchen needs to stay safe</h2>
+        </div>
+        <div class="features">
+          <div class="glass feature">
+            <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span>
+            <h3>Instant alerts</h3><p>Texts and emails to everyone on your list, day or night.</p>
+          </div>
+          <div class="glass feature">
+            <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg></span>
+            <h3>Inspection-ready logs</h3><p>Automatic temperature records, with every alert and fix noted.</p>
+          </div>
+          <div class="glass feature">
+            <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6.5h9M11 12.5h9M11 18.5h9"/></svg></span>
+            <h3>Digital checklists</h3><p>Opening and closing tasks on any phone, each one time-stamped.</p>
+          </div>
+          <div class="glass feature">
+            <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/></svg></span>
+            <h3>Every location, one screen</h3><p>Own more than one spot? See every unit at every location at a glance.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing -->
+      <section class="wrap section" id="pricing">
+        <div class="section-head">
+          <h2>Straightforward pricing</h2>
+          <p>You buy the equipment once and own it. A monthly plan covers 24/7 monitoring, alerts, logs, and support. Build your quote below and see every dollar before you commit.</p>
+        </div>
+
+        <div class="pricing">
+          <div class="glass calc">
+            <h3>Build your quote</h3>
+
+            <div class="calc-row">
+              <div>
+                <b>Units to monitor</b>
+                <small>Coolers, freezers, reach-ins, prep tables, and hot wells</small>
+              </div>
+              <div class="stepper">
+                <button type="button" id="unitsMinus" aria-label="One fewer unit">&minus;</button>
+                <output id="unitsOut" aria-live="polite">5</output>
+                <button type="button" id="unitsPlus" aria-label="One more unit">+</button>
+              </div>
+            </div>
+
+            <div class="calc-row col">
+              <b>Connection</b>
+              <div class="seg" role="radiogroup" aria-label="Connection">
+                <button type="button" role="radio" data-conn="ethernet" aria-checked="true"><span>Internet cable</span><small>Plugs into your router</small></button>
+                <button type="button" role="radio" data-conn="cellular" aria-checked="false"><span>Cellular</span><small>Alerts still work if your internet goes down</small></button>
+              </div>
+            </div>
+
+            <div class="calc-row col">
+              <b>Monitoring plan</b>
+              <div class="seg" role="radiogroup" aria-label="Billing">
+                <button type="button" role="radio" data-bill="monthly" aria-checked="true"><span>Monthly</span><small>Cancel with 30 days notice</small></button>
+                <button type="button" role="radio" data-bill="annual" aria-checked="false"><span>Yearly</span><small>Pay for <span data-annual-months>10</span> months, get 12</small></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass quote">
+            <span class="chip brand">Your quote</span>
+
+            <div class="q-block">
+              <h4>One-time, you own it</h4>
+              <dl>
+                <div><dt id="qGatewayLabel">Gateway (internet cable)</dt><dd id="qGateway">$0</dd></div>
+                <div><dt id="qSensorsLabel">5 sensors with food-grade probes</dt><dd id="qSensors">$0</dd></div>
+                <div><dt>Setup and activation (preconfigured, shipped, remote setup call)</dt><dd id="qInstall">$0</dd></div>
+                <div class="total"><dt>Equipment and setup</dt><dd id="qUpfront">$0</dd></div>
+              </dl>
+            </div>
+
+            <div class="q-block">
+              <h4 id="qPlanTitle">Monitoring plan</h4>
+              <dl>
+                <div><dt>Base monitoring per location</dt><dd id="qBase">$0</dd></div>
+                <div><dt id="qPerLabel">5 units monitored</dt><dd id="qPer">$0</dd></div>
+                <div class="total"><dt id="qPlanLabel">Per month</dt><dd id="qPlan">$0</dd></div>
+              </dl>
+            </div>
+
+            <div class="q-year">
+              <span>Total for your first year</span>
+              <strong id="qYear">$0</strong>
+            </div>
+
+            <a class="btn-m btn-ice full" href="#quote" id="quoteBtn">Send me this quote</a>
+            <p class="fine">Prices before sales tax. Equipment includes a 1-year warranty. One walk-in failure can cost $5,000 to $15,000 in lost food.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quote request -->
+      <section class="wrap section" id="quote">
+        <div class="quote-wrap">
+          <div class="section-head">
+            <h2>Get your quote</h2>
+            <p>Send us your details and we'll confirm your quote, answer your questions by phone or video call, and send a secure payment link. No payment until you approve your quote.</p>
+            <p class="quote-summary" id="quoteSummary"></p>
+          </div>
+          <form class="glass trial-form" id="trial" novalidate>
+            <div class="row">
+              <label class="field"><span>Your name</span><input name="name" autocomplete="name" required></label>
+              <label class="field"><span>Restaurant</span><input name="restaurant" autocomplete="organization" required></label>
+            </div>
+            <div class="row">
+              <label class="field"><span>Phone</span><input name="phone" type="tel" autocomplete="tel" required></label>
+              <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+            </div>
+            <label class="field"><span>Anything we should know? (optional)</span><input name="notes" placeholder="Number of locations, best time to call"></label>
+            <button class="btn-m btn-ice full" type="submit">Request my quote</button>
+            <p class="form-msg" id="trialMsg" role="status"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="wrap section faq">
+        <div class="section-head"><h2>Questions owners ask</h2></div>
+        <div class="faq-list">
+          <details class="glass"><summary>What am I paying for?</summary><p>Two things. The equipment is a one-time purchase that you own: a gateway plus one sensor for each unit. The monthly plan pays for 24/7 monitoring, text and email alerts, your inspection logs, and support.</p></details>
+          <details class="glass"><summary>Is there a contract?</summary><p>No long-term contract. The monthly plan can be canceled with 30 days notice. The yearly plan costs less and is paid up front.</p></details>
+          <details class="glass"><summary>What happens if a sensor breaks?</summary><p>Equipment comes with a 1-year warranty. If a sensor fails in that time, we replace it. Night Shift also alerts you if a sensor stops reporting, so a dead battery never looks like "all clear."</p></details>
+          <details class="glass"><summary>Do I install it myself?</summary><p>Yes, and it is simple. Every sensor arrives registered to your account. Plug in the gateway, mount each sensor outside its cooler with the probe inside, then scan or type the sensor ID on your setup page and name the unit. We walk you through it on a phone or video call if you want help.</p></details>
+          <details class="glass"><summary>Can I add units later?</summary><p>Yes. Each added sensor is a one-time equipment cost plus the per-unit monitoring fee. Your gateway already covers the whole building.</p></details>
+          <details class="glass"><summary>What do I show the health inspector?</summary><p>Open the logs on any phone or print them. Every reading, alert, peak temperature, and time out of range is recorded automatically.</p></details>
+        </div>
+      </section>
+
+      <!-- Final CTA -->
+      <section class="wrap section">
+        <div class="glass final-cta">
+          <div>
+            <h2>Let Night Shift take the night shift.</h2>
+            <p>See exactly what it costs for your kitchen in under a minute.</p>
+          </div>
+          <div class="ctas">
+            <a class="btn-m btn-ice" href="#pricing">Build your quote</a>
+            <a class="btn-m btn-glass" href="./dashboard.html?demo=1">See the live demo</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <span>Part of the <b>COOKd Kitchen</b> family. &copy; <span id="year"></span> ColdCheck</span>
+        <span>Questions? Call <a id="salesPhone" href="#">us</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="./src/js/landing.js"></script>
+</body>
+</html>

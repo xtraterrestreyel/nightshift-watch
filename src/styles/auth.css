@@ -1,0 +1,10 @@
+.auth { min-height: calc(100vh - 80px); display: grid; place-items: center; padding-top: 48px; padding-bottom: 48px; }
+.auth-card { width: min(430px, 100%); padding: 34px 30px 28px; border-radius: 24px; }
+.auth-card > .mark { margin-bottom: 22px; }
+.auth-card h1 { font-weight: 700; font-size: 32px; letter-spacing: -.03em; line-height: 1.1; margin: 0 0 8px; }
+.auth-card > p { color: var(--ink-soft); margin: 0 0 26px; font-size: 15px; }
+.auth-card .full { width: 100%; }
+.auth-card .form-msg { font-size: 14px; }
+.divider { display: flex; align-items: center; gap: 12px; color: var(--ink-soft); font-size: 13px; margin: 8px 0 16px; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.form-note.small { font-size: 14px; text-align: center; margin: 20px 0 0; }

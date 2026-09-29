@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dashboard | ColdCheck by COOKd Kitchen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/theme.css">
+  <link rel="stylesheet" href="./src/styles/base.css">
+  <link rel="stylesheet" href="./src/styles/dashboard.css">
+</head>
+<body class="app">
+  <div class="bg" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    <div class="frost"></div>
+    <div id="flakes"></div>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="side-logo" href="./index.html">
+        <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></span>
+        <span><b>COOKd Kitchen</b><small>ColdCheck</small></span>
+      </a>
+
+      <nav class="side-nav" aria-label="Dashboard">
+        <button type="button" data-page="overview" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/></svg>
+          Overview<span class="nav-count" data-count hidden></span>
+        </button>
+        <button type="button" data-page="logs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg>
+          Temperature logs
+        </button>
+        <button type="button" data-page="lists">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6.5h9M11 12.5h9M11 18.5h9"/></svg>
+          Checklists
+        </button>
+        <button type="button" data-page="inventory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5L12 12l9-4.5M12 12v9"/></svg>
+          Inventory
+        </button>
+        <button type="button" data-page="alerts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>
+          Alert contacts
+        </button>
+        <button type="button" data-page="setup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="13" rx="2.5"/><path d="M12 15.5v3.5M9 21.5h6M10 6.5h4M10 9.5h4"/></svg>
+          Sensor setup
+        </button>
+      </nav>
+
+      <div class="side-foot">
+        <div class="ns-card" id="nsCard">
+          <span class="pulse"></span>
+          <div><b id="nsTitle">Night Shift is on</b><small id="nsText">Watching every unit</small></div>
+        </div>
+        <div class="user">
+          <span class="avatar" id="avatar">D</span>
+          <div><b id="who"></b><small id="restaurantSmall"></small></div>
+        </div>
+        <button class="btn-quiet js-logout" type="button">Log out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="mobile-brand">
+        <span class="mark sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></span>
+        <b>ColdCheck</b>
+        <button class="btn-quiet js-logout" type="button">Log out</button>
+      </div>
+
+      <header class="page-head">
+        <div>
+          <h1 id="pageTitle">Overview</h1>
+          <p id="pageSub"></p>
+        </div>
+        <div class="head-actions">
+          <span class="clock-chip" id="clock">--:--</span>
+          <button class="btn-sim" id="simBtn" type="button">Simulate 3 a.m. failure</button>
+          <button class="btn-quiet" id="resetBtn" type="button">Reset</button>
+        </div>
+      </header>
+
+      <div class="strip">
+        <q>Night Shift never clocks out. Every reading gets logged, every alert gets answered.</q>
+        <span class="chip brand">Demo mode</span>
+      </div>
+
+      <!-- Overview -->
+      <section class="page" id="page-overview">
+        <div class="stats">
+          <div class="stat" id="stSafeCard"><span>Units in safe range</span><strong id="stSafe">6/6</strong><small id="stSafeNote">Everything is holding temp</small></div>
+          <div class="stat feature"><span>Inventory protected</span><strong id="stockVal">$0</strong><small>Across all units</small></div>
+          <div class="stat" id="stAlertsCard"><span>Alerts today</span><strong id="stAlerts">0</strong><small id="stAlertsNote">Quiet so far</small></div>
+          <div class="stat"><span>Checklists done</span><strong id="stChecks">0/12</strong><small>Opening and closing</small></div>
+        </div>
+
+        <section class="card rail-card" aria-label="Live alerts">
+          <div class="card-head"><h2>Live alerts</h2><span class="chip" id="sumText">All units safe</span></div>
+          <div class="rail"></div>
+          <div class="tickets" id="tickets"></div>
+        </section>
+
+        <section aria-label="Units">
+          <div class="section-head"><h2>Units</h2><small>Sensors report every few minutes</small></div>
+          <div class="units" id="units"></div>
+        </section>
+      </section>
+
+      <!-- Logs -->
+      <section class="page" id="page-logs" hidden>
+        <div class="card">
+          <div class="log-head">
+            <h2>Last 7 days</h2>
+            <div class="ctrls">
+              <select id="logFilter" aria-label="Filter by unit"></select>
+              <button class="btn-ice" id="printBtn" type="button">Print for inspector</button>
+            </div>
+          </div>
+          <ul class="events" id="events"></ul>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Date</th><th>Unit</th><th>Opening</th><th>Closing</th><th>Result</th></tr></thead>
+            <tbody id="logBody"></tbody>
+          </table></div>
+          <p class="log-note">Readings recorded automatically by ColdCheck sensors. No clipboard needed.</p>
+        </div>
+      </section>
+
+      <!-- Checklists -->
+      <section class="page" id="page-lists" hidden>
+        <div class="lists" id="lists"></div>
+      </section>
+
+      <!-- Alert contacts -->
+      <section class="page" id="page-alerts" hidden>
+        <div class="lists">
+          <div class="card list">
+            <h2>Who gets alerts</h2>
+            <p class="prog">These people get a text or email when a unit leaves the safe zone.</p>
+            <ul class="contacts" id="contacts"></ul>
+          </div>
+          <form class="card list" id="contactForm" novalidate>
+            <h2>Add a person</h2>
+            <p class="prog">Owners, managers, and anyone on call.</p>
+            <label class="field"><span>Name</span><input name="name" required></label>
+            <label class="field"><span>Role</span><input name="role" placeholder="Manager"></label>
+            <label class="field"><span>Mobile number</span><input name="phone" type="tel"></label>
+            <label class="field"><span>Email</span><input name="email" type="email"></label>
+            <div class="checks">
+              <label><input type="checkbox" name="sms" checked> Text alerts</label>
+              <label><input type="checkbox" name="mail" checked> Email alerts</label>
+            </div>
+            <button class="btn-ice" type="submit">Add person</button>
+            <p class="form-msg" id="contactMsg" role="status"></p>
+          </form>
+        </div>
+        <p class="log-note">Demo mode: this list is saved on this device only. Real texts and emails start once the ColdCheck server is connected.</p>
+      </section>
+
+      <!-- Inventory -->
+      <section class="page" id="page-inventory" hidden>
+        <div id="invRoot" class="inv-root"></div>
+        <div id="invReport" class="inv-report" aria-hidden="true"></div>
+        <p class="log-note">Demo mode: inventory is saved on this device only.</p>
+      </section>
+
+      <!-- Sensor setup -->
+      <section class="page" id="page-setup" hidden>
+        <div class="card">
+          <div class="card-head"><h2>Set up your kit</h2><span class="chip brand">Step by step</span></div>
+          <ol class="setup-steps">
+            <li><b>Plug in the gateway.</b> Cellular gateways only need power. Internet-cable gateways also plug into your router. Place it somewhere central, off the floor.</li>
+            <li><b>Mount each sensor outside its unit.</b> Use the magnet or screws, next to the door. The sensor stays outside so the cold doesn't drain its battery.</li>
+            <li><b>Run the probe inside.</b> Pass the thin cable along the door seal and clip the probe to a shelf in the middle of the unit, away from the fan and door.</li>
+            <li><b>Add each sensor below.</b> Scan the label or type the 16-character sensor ID printed on it, then name the unit. Readings start within a few minutes.</li>
+          </ol>
+        </div>
+
+        <div class="lists">
+          <div class="card list">
+            <h2>Your sensors</h2>
+            <p class="prog" id="sensorCount">0 sensors connected</p>
+            <ul class="sensors" id="sensorList"></ul>
+          </div>
+
+          <form class="card list" id="sensorForm" novalidate>
+            <h2>Add a sensor</h2>
+            <p class="prog">Every sensor in your kit is already registered to your account.</p>
+            <label class="field"><span>Sensor ID (on the label)</span>
+              <input name="sensorId" id="sensorIdInput" autocomplete="off" spellcheck="false" placeholder="24E124136C470007" maxlength="23">
+            </label>
+            <div class="scan-row">
+              <label class="btn-quiet scan-btn">Scan the label with your camera
+                <input type="file" accept="image/*" capture="environment" id="scanInput" hidden>
+              </label>
+            </div>
+            <label class="field"><span>Unit name</span><input name="unitName" placeholder="Walk-in cooler"></label>
+            <label class="field"><span>Unit type</span>
+              <select name="kind" class="select">
+                <option value="cold">Cooler or reach-in (safe at 41&deg;F or below)</option>
+                <option value="freeze">Freezer (safe at 0&deg;F or below)</option>
+                <option value="hot">Hot holding (safe at 135&deg;F or above)</option>
+              </select>
+            </label>
+            <button class="btn-ice" type="submit">Add sensor</button>
+            <p class="form-msg" id="sensorMsg" role="status"></p>
+          </form>
+        </div>
+        <p class="log-note">Demo mode: sensors you add here are saved on this device and show simulated readings. With the ColdCheck server connected, they show live readings.</p>
+      </section>
+
+      <footer class="app-foot">
+        <span>Part of the <b>COOKd Kitchen</b> family. &copy; <span id="year"></span> ColdCheck</span>
+        <span>Night Shift, always on</span>
+      </footer>
+    </main>
+  </div>
+
+  <nav class="tabbar" aria-label="Dashboard">
+    <button type="button" data-page="overview" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/></svg>
+      Overview<span class="nav-count" data-count hidden></span>
+    </button>
+    <button type="button" data-page="logs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg>
+      Logs
+    </button>
+    <button type="button" data-page="lists">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6.5h9M11 12.5h9M11 18.5h9"/></svg>
+      Checklists
+    </button>
+    <button type="button" data-page="inventory">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5L12 12l9-4.5M12 12v9"/></svg>
+      Inventory
+    </button>
+    <button type="button" data-page="alerts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>
+      Alerts
+    </button>
+    <button type="button" data-page="setup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="13" rx="2.5"/><path d="M12 15.5v3.5M9 21.5h6M10 6.5h4M10 9.5h4"/></svg>
+      Setup
+    </button>
+  </nav>
+
+  <button class="notif" id="notif" type="button" aria-live="assertive">
+    <span class="n-top"><b>ColdCheck</b><span>now</span></span>
+    <p id="notifText"></p>
+  </button>
+
+  <script type="module" src="./src/js/dashboard.js"></script>
+</body>
+</html>
