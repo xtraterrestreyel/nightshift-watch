@@ -55,6 +55,19 @@
             <li>You own the equipment</li>
             <li>No long-term contract</li>
           </ul>
+          <div class="visitors" data-visitor-counter hidden>
+            <button class="vc-btn" type="button" aria-expanded="false" aria-describedby="vcPop">
+              <span class="pulse" aria-hidden="true"></span>
+              <span><b data-vc-total>0</b> <span data-vc-word>people have</span> visited Night Shift</span>
+              <svg class="vc-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="vc-pop" id="vcPop" role="tooltip">
+              <h4>Where our visitors are from</h4>
+              <ul class="vc-list" data-vc-regions></ul>
+              <p class="vc-states" data-vc-states></p>
+              <p class="vc-note">Counted by region only. We never store IP addresses or anything that identifies you.</p>
+            </div>
+          </div>
         </div>
 
         <div class="hero-visual" aria-label="Example of the ColdCheck app">

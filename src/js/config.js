@@ -5,7 +5,7 @@ export const CONFIG = {
   nickname: 'Night Shift',
 
   // Where free-trial requests from the landing page are sent
-  salesEmail: 'sales@example.com',
+  salesEmail: 'quote@nightshift.watch',
   salesPhone: '(555) 010-0100',
 
   // Monthly price per location, shown on the landing page
@@ -17,5 +17,5 @@ export const CONFIG = {
   demoPassword: 'coldcheck',
 
   // BACKEND: fill these in when the real server is connected
-  apiBaseUrl: ''
+  apiBaseUrl: 'https://nightshift-api.getcookd.workers.dev'
 };

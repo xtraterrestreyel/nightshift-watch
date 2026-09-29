@@ -1,9 +1,11 @@
 import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
+import { initVisitorCounter } from './counter.js';
 import { PRICING } from './pricing.js';
 import { makeFlakes } from './effects.js';
 
 initThemeToggle();
+initVisitorCounter();
 
 makeFlakes();
 
