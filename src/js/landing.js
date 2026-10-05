@@ -111,12 +111,24 @@ document.querySelectorAll('[data-bill]').forEach(b => b.addEventListener('click'
 renderQuote();
 
 // ---------- Quote request form ----------
-// BACKEND: right now this opens an email to CONFIG.salesEmail.
-// Later, send it to your database or CRM instead.
+// Sends straight to the Night Shift server, which saves it and emails quote@nightshift.watch.
+// No email app needed. If the server can't be reached, the visitor is shown the email address.
 const form = document.getElementById('trial');
 const msg = document.getElementById('trialMsg');
+const submitBtn = form.querySelector('button[type="submit"]');
+const apiBase = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '');
 
-form.addEventListener('submit', (e) => {
+function showFallback(intro) {
+  msg.className = 'form-msg error';
+  msg.innerHTML = '';
+  msg.append(intro + ' Please try again, or email us at ');
+  const a = document.createElement('a');
+  a.href = 'mailto:' + CONFIG.salesEmail;
+  a.textContent = CONFIG.salesEmail;
+  msg.append(a, '.');
+}
+
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(form));
   const missing = ['name', 'restaurant', 'phone', 'email'].filter(k => !String(data[k] || '').trim());
@@ -125,26 +137,45 @@ form.addEventListener('submit', (e) => {
     msg.textContent = 'Fill in your name, restaurant, phone, and email so we can reach you.';
     return;
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email).trim())) {
+    msg.className = 'form-msg error';
+    msg.textContent = 'That email address looks incomplete. Check it and try again.';
+    return;
+  }
+  if (!apiBase) { showFallback('Online requests are not connected yet.'); return; }
+
   const q = calcQuote();
-  const subject = 'ColdCheck quote request: ' + data.restaurant;
-  const body = [
-    'Name: ' + data.name,
-    'Restaurant: ' + data.restaurant,
-    'Phone: ' + data.phone,
-    'Email: ' + data.email,
-    'Notes: ' + (data.notes || 'none'),
-    '',
-    'QUOTE',
-    'Units: ' + quote.units,
-    'Gateway: ' + (quote.conn === 'cellular' ? 'Cellular' : 'Internet cable') + ' ' + money(q.gateway),
-    'Sensors: ' + money(q.sensors),
-    'Setup and activation: ' + money(PRICING.setupActivation),
-    'Equipment and setup total: ' + money(q.upfront),
-    'Monitoring: ' + (quote.bill === 'annual' ? money(q.yearlyPlan) + ' per year' : money(q.monthly) + ' per month'),
-    'First-year total: ' + money(q.firstYear)
-  ].join('\n');
-  window.location.href = 'mailto:' + CONFIG.salesEmail +
-    '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  msg.className = 'form-msg ok';
-  msg.textContent = 'Your email app should open with your quote filled in. Hit send and we will get back to you within one business day.';
+  const payload = {
+    name: data.name, restaurant: data.restaurant, phone: data.phone, email: data.email,
+    notes: data.notes || '', website: data.website || '',
+    quote: {
+      units: quote.units,
+      gateway: (quote.conn === 'cellular' ? 'Cellular' : 'Internet cable') + ' ' + money(q.gateway),
+      sensors: money(q.sensors),
+      setup: money(PRICING.setupActivation),
+      upfront: money(q.upfront),
+      monitoring: quote.bill === 'annual' ? money(q.yearlyPlan) + ' per year' : money(q.monthly) + ' per month',
+      firstYear: money(q.firstYear)
+    }
+  };
+
+  submitBtn.disabled = true;
+  const label = submitBtn.textContent;
+  submitBtn.textContent = 'Sending...';
+  msg.className = 'form-msg'; msg.textContent = '';
+  try {
+    const res = await fetch(apiBase + '/api/quote', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || !out.ok) throw new Error(out.error || 'send failed');
+    form.reset();
+    msg.className = 'form-msg ok';
+    msg.textContent = 'Got it! Your quote request is in. We will get back to you within one business day.';
+  } catch (err) {
+    showFallback('We could not send your request just now.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = label;
+  }
 });

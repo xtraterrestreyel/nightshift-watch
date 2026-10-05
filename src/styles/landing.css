@@ -235,3 +235,6 @@
   .vc-pop { left: 0; transform: translate(0, 6px); }
   .visitors.open .vc-pop { transform: none; }
 }
+
+/* Spam trap: hidden from people, bots fill it in */
+.hp-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
