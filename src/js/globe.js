@@ -91,6 +91,8 @@ export function createGlobe(canvas, size) {
   let colors = readColors();
   let phi = Math.PI; // start with North America facing the viewer
   let frame = 0;
+  let focus = null;      // { xyz, until } location being pointed out from the list
+  let targetPhi = null;  // rotation we are turning toward while focused
   const reduced = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
 
   const cx = size / 2, cy = size / 2, r = size * GLOBE_FRAC;
@@ -139,16 +141,53 @@ export function createGlobe(canvas, size) {
       ctx.beginPath(); ctx.arc(sx, sy, rad, 0, TAU); ctx.fill();
     }
     ctx.globalAlpha = 1;
+
+    // Focused location: a pulsing ring around the spot picked in the list
+    if (focus) {
+      const [fx, fy, fz] = focus.xyz;
+      const rz = -fx * s + fz * c;
+      if (rz > 0) {
+        const sx = cx - (fx * c + fz * s) * r;
+        const sy = cy - fy * r;
+        const t = (performance.now() % 1200) / 1200;
+        ctx.strokeStyle = litColor;
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.arc(sx, sy, 6, 0, TAU); ctx.stroke();
+        ctx.globalAlpha = 0.7 * (1 - t);
+        ctx.beginPath(); ctx.arc(sx, sy, 6 + 12 * t, 0, TAU); ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = litColor;
+        ctx.beginPath(); ctx.arc(sx, sy, DOT * 3.2, 0, TAU); ctx.fill();
+      }
+    }
+  }
+
+  // Shortest turn from the current rotation toward the target
+  function turnToward(target) {
+    let d = target - phi;
+    d = Math.atan2(Math.sin(d), Math.cos(d));
+    if (Math.abs(d) < 0.002) { phi = target; return; }
+    phi += d * 0.12;
   }
 
   function loop() {
-    phi += ROTATION_PER_FRAME;
+    if (targetPhi !== null) turnToward(targetPhi);
+    else phi += ROTATION_PER_FRAME;
     draw();
     frame = requestAnimationFrame(loop);
   }
 
   return {
     setTargets(targets) { lit = buildHighlights(points, targets); draw(); },
+    // Turn the globe to face a location and ring it. Pass null to resume spinning.
+    focusOn(lat, lng) {
+      if (lat == null || lng == null) { focus = null; targetPhi = null; if (reduced) draw(); return; }
+      const xyz = latLngToXYZ(lat, lng);
+      focus = { xyz };
+      targetPhi = Math.atan2(-xyz[0], xyz[2]);
+      if (reduced) { phi = targetPhi; draw(); }
+    },
     start() { cancelAnimationFrame(frame); if (reduced) draw(); else frame = requestAnimationFrame(loop); },
     stop() { cancelAnimationFrame(frame); },
     destroy() { cancelAnimationFrame(frame); themeWatch.disconnect(); }

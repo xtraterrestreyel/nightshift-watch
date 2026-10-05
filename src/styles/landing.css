@@ -238,3 +238,19 @@
 
 /* Spam trap: hidden from people, bots fill it in */
 .hp-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Full location list under the globe */
+.vc-locs-head { display: flex; justify-content: space-between; margin: 12px 0 6px; font-size: 12px; font-weight: 600; color: var(--ink); }
+.vc-locs-head span:last-child { color: var(--ink-soft); font-weight: 500; }
+.vc-locs { list-style: none; margin: 0; padding: 2px; max-height: 168px; overflow-y: auto; border-radius: 12px;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 35%, transparent); scrollbar-width: thin; }
+.vc-loc { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: none; border: 0; border-radius: 9px; padding: 6px 9px; font-size: 12.5px; color: var(--ink); cursor: pointer; }
+.vc-loc:hover, .vc-loc.active { background: color-mix(in srgb, var(--brand) 14%, transparent); }
+.vc-loc.no-map { cursor: default; }
+.vc-loc.no-map:hover { background: none; }
+.vc-loc-name small { display: block; font-size: 10.5px; color: var(--ink-soft); }
+.vc-loc-n { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.vc-hint { margin: 6px 0 0; font-size: 11px; color: var(--ink-soft); text-align: center; }
+@media (hover: none) { .vc-hint::after { content: ''; } }
+.vc-pop { max-height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: thin; }

@@ -38,6 +38,31 @@ function globeTargets(d) {
   return out;
 }
 
+// Every location with visitors: US states first, then other countries, then unknown.
+function allLocations(d) {
+  const list = [];
+  const states = (d.states || d.topStates || []).slice().sort((x, y) => y.n - x.n);
+  let stateSum = 0;
+  states.forEach(st => {
+    stateSum += st.n;
+    const c = STATE_CENTERS[st.state];
+    list.push({ name: st.state, sub: 'United States', n: st.n, lat: c ? c[0] : null, lng: c ? c[1] : null });
+  });
+  const countries = (d.countries || []).slice().sort((x, y) => y.n - x.n);
+  const us = countries.find(c => c.country === 'US');
+  if (us && us.n > stateSum) {
+    const p = COUNTRY_CENTERS.US;
+    list.push({ name: 'United States', sub: 'state not identified', n: us.n - stateSum, lat: p[0], lng: p[1] });
+  }
+  countries.filter(c => c.country !== 'US').forEach(c => {
+    const p = COUNTRY_CENTERS[c.country];
+    list.push({ name: countryName(c.country), sub: p ? '' : 'not on the globe yet', n: c.n, lat: p ? p[0] : null, lng: p ? p[1] : null });
+  });
+  const listed = list.reduce((a, x) => a + x.n, 0);
+  if ((d.total || 0) > listed) list.push({ name: 'Location unknown', sub: '', n: d.total - listed, lat: null, lng: null });
+  return list;
+}
+
 function renderText(box, d) {
   const total = d.total || 0;
   box.querySelector('[data-vc-total]').textContent = fmt(total);
@@ -48,9 +73,15 @@ function renderText(box, d) {
     const pct = total ? Math.round(byName[n] / total * 100) : 0;
     return `<li><span class="vc-name">${esc(LABEL[n] || n)}</span><span class="vc-bar"><i style="width:${Math.max(pct, 2)}%"></i></span><span class="vc-pct">${pct}%</span></li>`;
   }).join('') || '<li class="vc-empty">Region data is on its way.</li>';
-  const states = (d.states || d.topStates || []).slice().sort((x, y) => y.n - x.n).slice(0, 5).map(s => `${esc(s.state)} (${fmt(s.n)})`).join(', ');
-  const abroad = (d.countries || []).filter(c => c.country !== 'US').slice(0, 3).map(c => `${esc(countryName(c.country))} (${fmt(c.n)})`).join(', ');
-  box.querySelector('[data-vc-states]').textContent = [states && 'Top states: ' + states, abroad && 'Abroad: ' + abroad].filter(Boolean).join(' \u00b7 ');
+
+  const locs = allLocations(d);
+  const places = locs.filter(l => l.name !== 'Location unknown').length;
+  box.querySelector('[data-vc-loc-count]').textContent = places + (places === 1 ? ' location' : ' locations');
+  box.querySelector('[data-vc-locs]').innerHTML = locs.map(l => `
+    <li><button type="button" class="vc-loc${l.lat == null ? ' no-map' : ''}" ${l.lat == null ? '' : `data-lat="${l.lat}" data-lng="${l.lng}"`}>
+      <span class="vc-loc-name">${esc(l.name)}${l.sub ? `<small>${esc(l.sub)}</small>` : ''}</span>
+      <span class="vc-loc-n">${fmt(l.n)}</span>
+    </button></li>`).join('') || '<li class="vc-empty">No locations yet.</li>';
   box.querySelector('[data-vc-preview]').hidden = !PREVIEW;
 }
 
@@ -115,7 +146,7 @@ export function initVisitorCounter() {
   };
   const close = () => {
     box.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
-    if (globe) globe.stop();
+    if (globe) { globe.focusOn(null); globe.stop(); }
   };
   box.addEventListener('mouseenter', () => { if (canHover()) open(); });
   box.addEventListener('mouseleave', () => { if (canHover()) { clearTimeout(closeTimer); closeTimer = setTimeout(close, 180); } });
@@ -125,4 +156,23 @@ export function initVisitorCounter() {
   });
   document.addEventListener('pointerdown', (e) => { if (!box.contains(e.target)) close(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+  // Point out a location on the globe when its name is hovered, focused, or tapped
+  const list = box.querySelector('[data-vc-locs]');
+  let pinned = null;
+  const focusBtn = (b) => {
+    list.querySelectorAll('.vc-loc.active').forEach(x => x.classList.remove('active'));
+    if (!b || !b.dataset.lat || !globe) { if (globe) globe.focusOn(null); return; }
+    b.classList.add('active');
+    globe.focusOn(parseFloat(b.dataset.lat), parseFloat(b.dataset.lng));
+  };
+  list.addEventListener('mouseover', (e) => { if (canHover()) focusBtn(e.target.closest('.vc-loc')); });
+  list.addEventListener('mouseleave', () => { if (canHover() && !pinned) focusBtn(null); });
+  list.addEventListener('focusin', (e) => focusBtn(e.target.closest('.vc-loc')));
+  list.addEventListener('focusout', () => { if (!pinned) focusBtn(null); });
+  list.addEventListener('click', (e) => {
+    const b = e.target.closest('.vc-loc'); if (!b) return;
+    e.stopPropagation();
+    if (pinned === b) { pinned = null; focusBtn(null); } else { pinned = b; focusBtn(b); }
+  });
 }
