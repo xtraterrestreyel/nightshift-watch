@@ -307,10 +307,11 @@ async function pageLeads(body) {
   const filtered = () => leads.filter(l =>
     (!state.city || l.city === state.city) && (!state.priority || l.priority === state.priority) && (!state.status || l.status === state.status) &&
     (!state.assigned || (state.assigned === 'none' ? (!l.assigned_user_id && !l.assigned_team_id) : String(l.assigned_user_id) === state.assigned)) &&
-    (!state.q || (l.name + ' ' + (l.type || '')).toLowerCase().includes(state.q.toLowerCase())));
+    (!state.q || (l.name + ' ' + (l.type || '') + ' ' + (l.contact || '')).toLowerCase().includes(state.q.toLowerCase())));
   body.innerHTML = `
+    ${callWindowBanner()}
     <div class="card filters">
-      <input class="mini-input" data-f="q" placeholder="Search by name or type">
+      <input class="mini-input" data-f="q" placeholder="Search by business, type, or contact">
       <select class="mini-select" data-f="city"><option value="">All towns</option>${cities.map(c => `<option>${esc(c)}</option>`).join('')}</select>
       <select class="mini-select" data-f="priority"><option value="">All priorities</option><option>Top 30</option><option>Multi-location</option><option>Standard</option></select>
       <select class="mini-select" data-f="status"><option value="">All statuses</option>${d.statuses.map(s => `<option>${esc(s)}</option>`).join('')}</select>
@@ -331,7 +332,7 @@ async function pageLeads(body) {
       <p class="sel-hint">Tip: filter first (for example Unassigned), then select the first 10 to 100 shown. Hold Shift and click two checkboxes to select everything between them.</p>
     </div>` : ''}
     <div class="card"><div class="table-scroll"><table class="leads-table">
-      <thead><tr>${manager ? '<th><input type="checkbox" id="pickAll" aria-label="Select or clear all shown"></th>' : ''}<th>Business</th><th>Phone</th><th>Town</th><th>Why call</th>${manager ? '<th>Assigned to</th>' : ''}<th>Status and notes</th></tr></thead>
+      <thead><tr>${manager ? '<th><input type="checkbox" id="pickAll" aria-label="Select or clear all shown"></th>' : ''}<th>Business</th><th>Phone and who to ask for</th><th>Town and best time to call</th><th>Why call</th>${manager ? '<th>Assigned to</th>' : ''}<th>Status and notes</th></tr></thead>
       <tbody id="leadRows"></tbody></table></div><p class="log-note" id="leadCount"></p></div>`;
   const selected = new Set();
   const rows = document.getElementById('leadRows');
@@ -340,8 +341,11 @@ async function pageLeads(body) {
     rows.innerHTML = list.map(l => `<tr data-id="${l.id}">
       ${manager ? `<td><input type="checkbox" class="pick" ${selected.has(l.id) ? 'checked' : ''} aria-label="Select ${esc(l.name)}"></td>` : ''}
       <td><b>${esc(l.name)}</b><small class="cell-sub">${esc(l.type || '')}${l.priority && l.priority !== 'Standard' ? ' &middot; ' + esc(l.priority) : ''}${l.group_name ? ' &middot; ' + esc(l.group_name) : ''}</small></td>
-      <td><span class="phone">${esc(l.phone || '')}</span><button class="btn-call" type="button" disabled title="Calling from the dashboard is coming soon">Call</button></td>
-      <td>${esc(l.city || '')}<small class="cell-sub">${esc(l.address || '')}</small></td>
+      <td class="call-cell"><span class="phone">${esc(l.phone || '')}</span>
+        <label class="ask-for"><span>Ask for</span><input class="mini-input contact" maxlength="120" value="${esc(l.contact || '')}" placeholder="Owner or manager"></label>
+        <button class="btn-call" type="button" disabled title="Calling from the dashboard is coming soon">Call</button></td>
+      <td class="town-cell">${esc(l.city || '')}<small class="cell-sub">${esc(l.address || '')}</small>
+        <label class="ask-for"><span>Best time to call</span><textarea class="mini-input besttime" rows="2" maxlength="160" placeholder="2 to 4 p.m. Central">${esc(l.best_time || '')}</textarea></label></td>
       <td class="why">${esc(l.why || '')}</td>
       ${manager ? `<td>${esc(nameOf[l.assigned_user_id] || (l.assigned_team_id ? 'Team: ' + (teamOf[l.assigned_team_id] || 'your team') : 'Unassigned'))}</td>` : ''}
       <td class="status-cell"><select class="mini-select st">${d.statuses.map(s => `<option ${s === l.status ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
@@ -384,11 +388,11 @@ async function pageLeads(body) {
   rows.addEventListener('click', async (e) => {
     const b = e.target.closest('.save'); if (!b) return;
     const tr = b.closest('tr'); const id = parseInt(tr.dataset.id, 10);
-    const status = tr.querySelector('.st').value, notes = tr.querySelector('.notes').value;
+    const status = tr.querySelector('.st').value, notes = tr.querySelector('.notes').value, contact = tr.querySelector('.contact').value, best_time = tr.querySelector('.besttime').value;
     busy(b, true, 'Saving');
     try {
-      await api('/leads/update', { method: 'POST', body: { id, status, notes } });
-      const l = leads.find(x => x.id === id); l.status = status; l.notes = notes;
+      await api('/leads/update', { method: 'POST', body: { id, status, notes, contact, best_time } });
+      const l = leads.find(x => x.id === id); l.status = status; l.notes = notes; l.contact = contact; l.best_time = best_time;
       toast('Lead updated');
     } catch (err) { toast(err.message, true); }
     finally { busy(b, false); }
@@ -422,6 +426,28 @@ async function pageLeads(body) {
       catch (err) { toast(err.message, true); busy(e.target, false); }
     });
   }
+}
+
+// Best calling window (2 to 4 p.m. Central) shown in the viewer's own time zone.
+function tzOffsetMinutes(tz, date) {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(date);
+  const m = {}; parts.forEach(p => { m[p.type] = p.value; });
+  return (Date.UTC(+m.year, +m.month - 1, +m.day, (+m.hour) % 24, +m.minute, +m.second) - date.getTime()) / 60000;
+}
+function centralToLocal(hour) {
+  const now = new Date();
+  const off = tzOffsetMinutes('America/Chicago', now);
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
+  const m = {}; parts.forEach(p => { m[p.type] = p.value; });
+  const utc = Date.UTC(+m.year, +m.month - 1, +m.day, hour, 0, 0) - off * 60000;
+  return new Date(utc).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '').replace('AM', 'a.m.').replace('PM', 'p.m.');
+}
+function callWindowBanner() {
+  let localTz = '';
+  try { localTz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { /* ignore */ }
+  let mine = '';
+  try { if (localTz && localTz !== 'America/Chicago') mine = ` That's <b>${esc(centralToLocal(14))} to ${esc(centralToLocal(16))}</b> your time.`; } catch (e) { /* ignore */ }
+  return `<div class="card call-window"><b>Best general calling window: 2 to 4 p.m. Central</b>, between lunch and dinner.${mine} Each lead below shows its own best time when it differs.</div>`;
 }
 
 // ---------- Invites (owner and team lead) ----------
