@@ -323,10 +323,15 @@ async function pageLeads(body) {
         <optgroup label="Person">${people.map(p => `<option value="user:${p.id}">${esc(p.name)}</option>`).join('')}</optgroup>
         <option value="none">${me.role === 'owner' ? 'Unassign' : 'Back to team pool'}</option></select>
       <button class="btn-ice" type="button" id="assignBtn">Apply</button>
-      <button class="btn-quiet" type="button" id="selAll">Select all shown</button>
+      <span class="sel-tools">
+        <select class="mini-select" id="selN" aria-label="How many to select"><option>10</option><option selected>20</option><option>25</option><option>50</option><option>100</option></select>
+        <button class="btn-quiet" type="button" id="selFirst">Select</button>
+        <button class="btn-quiet" type="button" id="selAll">Select all shown</button>
+      </span>
+      <p class="sel-hint">Tip: filter first (for example Unassigned), then select the first 10 to 100 shown. Hold Shift and click two checkboxes to select everything between them.</p>
     </div>` : ''}
     <div class="card"><div class="table-scroll"><table class="leads-table">
-      <thead><tr>${manager ? '<th></th>' : ''}<th>Business</th><th>Phone</th><th>Town</th><th>Why call</th>${manager ? '<th>Assigned to</th>' : ''}<th>Status and notes</th></tr></thead>
+      <thead><tr>${manager ? '<th><input type="checkbox" id="pickAll" aria-label="Select or clear all shown"></th>' : ''}<th>Business</th><th>Phone</th><th>Town</th><th>Why call</th>${manager ? '<th>Assigned to</th>' : ''}<th>Status and notes</th></tr></thead>
       <tbody id="leadRows"></tbody></table></div><p class="log-note" id="leadCount"></p></div>`;
   const selected = new Set();
   const rows = document.getElementById('leadRows');
@@ -343,16 +348,38 @@ async function pageLeads(body) {
         <textarea class="mini-input notes" rows="2" placeholder="Notes">${esc(l.notes || '')}</textarea>
         <button class="btn-quiet save" type="button">Save</button></td></tr>`).join('');
     document.getElementById('leadCount').textContent = list.length + ' of ' + leads.length + ' leads shown';
-    if (manager) document.getElementById('selCount').textContent = selected.size + ' selected';
+    syncSelection();
   }
+  // Keep the selected count, the toggle button, and the header checkbox in step with the selection.
+  function syncSelection() {
+    if (!manager) return;
+    const shown = filtered();
+    const shownSelected = shown.filter(l => selected.has(l.id)).length;
+    document.getElementById('selCount').textContent = selected.size + ' selected' + (selected.size && shownSelected !== selected.size ? ' (' + shownSelected + ' shown)' : '');
+    document.getElementById('selAll').textContent = selected.size ? 'Clear selection' : 'Select all shown';
+    const all = document.getElementById('pickAll');
+    all.checked = shown.length > 0 && shownSelected === shown.length;
+    all.indeterminate = shownSelected > 0 && shownSelected < shown.length;
+  }
+  let lastPicked = null;
   draw();
   body.querySelectorAll('[data-f]').forEach(el => el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', () => { state[el.dataset.f] = el.value; draw(); }));
-  rows.addEventListener('change', (e) => {
-    if (e.target.classList.contains('pick')) {
-      const id = parseInt(e.target.closest('tr').dataset.id, 10);
-      if (e.target.checked) selected.add(id); else selected.delete(id);
-      document.getElementById('selCount').textContent = selected.size + ' selected';
+  rows.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('pick')) return;
+    const id = parseInt(e.target.closest('tr').dataset.id, 10);
+    const on = e.target.checked;
+    if (e.shiftKey && lastPicked !== null) {
+      // Shift-click: apply to every shown lead between the last click and this one
+      const ids = filtered().map(l => l.id);
+      const a = ids.indexOf(lastPicked), b = ids.indexOf(id);
+      if (a !== -1 && b !== -1) {
+        ids.slice(Math.min(a, b), Math.max(a, b) + 1).forEach(x => { if (on) selected.add(x); else selected.delete(x); });
+        draw(); lastPicked = id; return;
+      }
     }
+    if (on) selected.add(id); else selected.delete(id);
+    lastPicked = id;
+    syncSelection();
   });
   rows.addEventListener('click', async (e) => {
     const b = e.target.closest('.save'); if (!b) return;
@@ -367,7 +394,22 @@ async function pageLeads(body) {
     finally { busy(b, false); }
   });
   if (manager) {
-    document.getElementById('selAll').addEventListener('click', () => { filtered().forEach(l => selected.add(l.id)); draw(); });
+    document.getElementById('selAll').addEventListener('click', () => {
+      if (selected.size) selected.clear(); else filtered().forEach(l => selected.add(l.id));
+      lastPicked = null; draw();
+    });
+    document.getElementById('selFirst').addEventListener('click', () => {
+      const n = parseInt(document.getElementById('selN').value, 10) || 20;
+      selected.clear();
+      filtered().slice(0, n).forEach(l => selected.add(l.id));
+      lastPicked = null; draw();
+      toast(Math.min(n, filtered().length) + ' leads selected');
+    });
+    document.getElementById('pickAll').addEventListener('change', (e) => {
+      const shown = filtered();
+      if (e.target.checked) shown.forEach(l => selected.add(l.id)); else shown.forEach(l => selected.delete(l.id));
+      lastPicked = null; draw();
+    });
     document.getElementById('assignBtn').addEventListener('click', async (e) => {
       const v = document.getElementById('assignTo').value;
       if (!selected.size) return toast('Select some leads first.', true);
