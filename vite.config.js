@@ -12,7 +12,8 @@ export default defineConfig({
       input: {
         main: resolve(root, 'index.html'),
         login: resolve(root, 'login.html'),
-        dashboard: resolve(root, 'dashboard.html')
+        dashboard: resolve(root, 'dashboard.html'),
+        portal: resolve(root, 'portal.html')
       }
     }
   }

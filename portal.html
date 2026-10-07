@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>try { if (localStorage.getItem('nightshift.theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}</script>
+  <meta name="robots" content="noindex">
+  <title>Team Portal | Night Shift</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/theme.css">
+  <link rel="stylesheet" href="./src/styles/base.css">
+  <link rel="stylesheet" href="./src/styles/dashboard.css">
+  <link rel="stylesheet" href="./src/styles/portal.css">
+</head>
+<body class="app">
+  <div class="bg" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    <div class="frost"></div>
+  </div>
+  <div id="app" class="portal-root"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <template id="snow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></template>
+  <script type="module" src="./src/js/portal.js"></script>
+</body>
+</html>

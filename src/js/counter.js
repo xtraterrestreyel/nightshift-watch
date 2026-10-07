@@ -2,6 +2,7 @@
 // Talks to the nightshift-api Worker on Cloudflare. Hidden until CONFIG.apiBaseUrl is set.
 import { CONFIG } from './config.js';
 import { STATE_CENTERS, COUNTRY_CENTERS } from './places.js';
+import { captureRef, visitorId } from './ref.js';
 
 const ORDER = ['Midwest', 'South', 'West', 'Northeast', 'Outside the US', 'Unknown'];
 const LABEL = { 'Unknown': 'Location unknown' };
@@ -114,19 +115,18 @@ export function initVisitorCounter() {
   if (PREVIEW) {
     show(SAMPLE);
   } else {
-    let vid = null;
-    try {
-      vid = localStorage.getItem('nightshift.vid');
-      if (!vid) {
-        vid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2, 12);
-        localStorage.setItem('nightshift.vid', vid);
-      }
-    } catch (e) { /* storage blocked: the server counts once per day instead */ }
+    const vid = visitorId();
+    const ref = captureRef();
     let counted = false;
     try { counted = sessionStorage.getItem('nightshift.counted') === '1'; } catch (e) { /* ignore */ }
-    const req = counted
-      ? fetch(base + '/api/stats')
-      : fetch(base + '/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(vid ? { vid } : {}) });
+    // Always record a visit that arrives through a rep's link, so the rep gets credit.
+    const send = !counted || ref.fromUrl;
+    const payload = {};
+    if (vid) payload.vid = vid;
+    if (ref.fromUrl || ref.code) payload.ref = ref.fromUrl || ref.code;
+    const req = send
+      ? fetch(base + '/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      : fetch(base + '/api/stats');
     req.then(r => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(d => { try { sessionStorage.setItem('nightshift.counted', '1'); } catch (e) { /* ignore */ } show(d); })
       .catch(() => { /* server unavailable: stay hidden */ });

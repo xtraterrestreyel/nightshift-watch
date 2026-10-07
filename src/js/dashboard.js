@@ -2,6 +2,17 @@ import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
 import { getSession, startDemo, logout } from './auth.js';
 import { createInventory } from './inventory.js';
+import { captureRef, visitorId } from './ref.js';
+
+// Credit demo views to the rep whose link brought the visitor (once per browser session).
+(function trackDemoView() {
+  const base = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '');
+  const ref = captureRef();
+  const code = ref.fromUrl || ref.code;
+  if (!base || !code) return;
+  try { if (sessionStorage.getItem('nightshift.demoTracked') === code) return; sessionStorage.setItem('nightshift.demoTracked', code); } catch (e) { /* ignore */ }
+  fetch(base + '/api/ref-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref: code, vid: visitorId(), type: 'demo' }) }).catch(() => {});
+})();
 
 initThemeToggle();
 

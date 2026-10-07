@@ -1,6 +1,7 @@
 import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
 import { initVisitorCounter } from './counter.js';
+import { getRef, captureRef } from './ref.js';
 import { PRICING } from './pricing.js';
 import { makeFlakes } from './effects.js';
 
@@ -117,6 +118,9 @@ const form = document.getElementById('trial');
 const msg = document.getElementById('trialMsg');
 const submitBtn = form.querySelector('button[type="submit"]');
 const apiBase = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '');
+captureRef();
+const refInput = form.querySelector('input[name="ref"]');
+if (refInput && getRef()) refInput.value = getRef();
 
 function showFallback(intro) {
   msg.className = 'form-msg error';
@@ -148,6 +152,7 @@ form.addEventListener('submit', async (e) => {
   const payload = {
     name: data.name, restaurant: data.restaurant, phone: data.phone, email: data.email,
     notes: data.notes || '', website: data.website || '',
+    ref: String(data.ref || '').trim().toUpperCase(),
     quote: {
       units: quote.units,
       gateway: (quote.conn === 'cellular' ? 'Cellular' : 'Internet cable') + ' ' + money(q.gateway),
@@ -170,6 +175,7 @@ form.addEventListener('submit', async (e) => {
     const out = await res.json().catch(() => ({}));
     if (!res.ok || !out.ok) throw new Error(out.error || 'send failed');
     form.reset();
+    if (refInput && getRef()) refInput.value = getRef();
     msg.className = 'form-msg ok';
     msg.textContent = 'Got it! Your quote request is in. We will get back to you within one business day.';
   } catch (err) {
