@@ -37,3 +37,27 @@
   .perks, .row2, .row3, .yn-row { grid-template-columns: 1fr; }
   .apply-form, .apply-done { padding: 22px 18px; }
 }
+
+.role-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 6px; }
+.role-card { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 16px 44px; border-radius: 16px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 35%, transparent); cursor: pointer; transition: border-color .2s, background-color .2s; }
+.role-card input { position: absolute; left: 16px; top: 18px; width: 17px; height: 17px; accent-color: var(--brand); }
+.role-card b { font-size: 15px; }
+.role-card span { font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
+.role-card.on { border-color: color-mix(in srgb, var(--brand) 70%, transparent); background: color-mix(in srgb, var(--brand) 12%, transparent); }
+.checks { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 4px 0 14px; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; background: color-mix(in srgb, var(--bg) 35%, transparent); }
+.checks legend { padding: 0 4px; font-size: 13.5px; font-weight: 500; color: var(--ink-soft); }
+.checks label { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; cursor: pointer; }
+.checks input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--brand); }
+.checks .tools-other { flex: 1; min-width: 180px; }
+.window-hint { margin: -6px 0 12px; }
+.yn-row.one { grid-template-columns: 1fr; }
+.yn-row.four { grid-template-columns: repeat(4, 1fr); }
+.leadership { margin-top: 6px; }
+.leadership .yn { margin-bottom: 14px; }
+.lead-star { display: none; font-style: normal; }
+.is-leader .lead-star { display: inline; }
+.apply-form .job .field select { width: 100%; }
+@media (max-width: 900px) { .role-cards { grid-template-columns: 1fr; } .yn-row.four { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .yn-row.four { grid-template-columns: 1fr; } }
+
+.ack[hidden], .leadership[hidden], .manager-only[hidden] { display: none; }

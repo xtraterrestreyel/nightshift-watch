@@ -45,96 +45,162 @@
       <section class="wrap careers-hero">
         <span class="pill"><span class="pulse"></span>Now recruiting</span>
         <h1>Join the Night Shift team</h1>
-        <p class="lead">We help restaurants protect their food with sensors that text the owner the moment a cooler or freezer starts warming up. We're building a sales team of business-to-business specialists and team leads to bring it to kitchens across the country.</p>
+        <p class="lead">We help restaurants protect their food with sensors that text the owner the moment a cooler or freezer starts warming up. We're building our sales organization: business-to-business specialists, team leads, and regional managers to bring it to kitchens across the country.</p>
         <div class="perks">
           <div class="glass perk"><b>Your own dashboard</b><span>Personal referral link, QR code, and live stats on every visit, demo view, and quote request.</span></div>
           <div class="glass perk"><b>Leads provided</b><span>Assigned to you with who to ask for and the best time to call.</span></div>
           <div class="glass perk"><b>Commission plus residuals</b><span>Commission on every sale, plus monthly residuals while your customers stay.</span></div>
           <div class="glass perk"><b>Work remotely</b><span>In-browser calling from a local US number is coming soon.</span></div>
         </div>
-        <p class="fine-print">This is an independent, commission-based role. Applications take about 5 minutes.</p>
+        <p class="fine-print">These are independent, commission-based roles. The application takes about 10 minutes, a little longer for leadership positions.</p>
       </section>
 
       <section class="wrap">
         <form class="glass apply-form" id="applyForm" novalidate>
           <h2>Application</h2>
-          <p class="muted-line">Fields marked with * are required.</p>
+          <p class="muted-line">Fields marked with * are required. Leadership positions include a few extra questions.</p>
 
-          <h3>1. About you</h3>
+          <h3>1. Position</h3>
+          <div class="role-cards" role="radiogroup" aria-label="Position">
+            <label class="role-card"><input type="radio" name="role" value="Business-to-business specialist" required>
+              <b>Business-to-business specialist</b><span>Call restaurants and food businesses, show the demo, and close sales.</span></label>
+            <label class="role-card"><input type="radio" name="role" value="Team lead">
+              <b>Team lead</b><span>Recruit, coach, and lead a team of up to 10 specialists while selling yourself.</span></label>
+            <label class="role-card"><input type="radio" name="role" value="Regional manager">
+              <b>Regional manager</b><span>Oversee several team leads and their teams across a territory.</span></label>
+          </div>
+
+          <h3>2. About you</h3>
           <div class="row2">
-            <label class="field"><span>Full name *</span><input name="name" autocomplete="name" required></label>
-            <label class="field"><span>Email *</span><input name="email" type="email" autocomplete="email" required></label>
+            <label class="field "><span>Full name *</span><input name="name" required autocomplete="name"></label>
+            <label class="field "><span>Email *</span><input name="email" required type="email" autocomplete="email"></label>
           </div>
           <div class="row2">
-            <label class="field"><span>Phone or WhatsApp number *</span><input name="phone" type="tel" autocomplete="tel" placeholder="Include country code, like +1 or +234" required></label>
+            <label class="field "><span>Phone or WhatsApp number *</span><input name="phone" required type="tel" autocomplete="tel" placeholder="Include country code, like +1 or +234"></label>
             <label class="field"><span>Best way to reach you</span><select name="contact_pref"><option>Email</option><option>Phone call</option><option>WhatsApp</option><option>Text message</option></select></label>
           </div>
           <div class="row2">
             <label class="field"><span>Country *</span><input name="country" list="countries" autocomplete="country-name" required>
               <datalist id="countries"><option>United States</option><option>Nigeria</option><option>Ghana</option><option>Kenya</option><option>South Africa</option><option>Philippines</option><option>India</option><option>United Kingdom</option><option>Canada</option><option>Jamaica</option></datalist></label>
-            <label class="field"><span>City and state or region *</span><input name="location" autocomplete="address-level2" required></label>
+            <label class="field "><span>City and state or region *</span><input name="location" required autocomplete="address-level2"></label>
           </div>
+          <label class="field"><span>Resume or LinkedIn link <em class="lead-star">*</em></span><input name="resume_url" type="url" placeholder="https:// (Google Drive, Dropbox, or LinkedIn)" data-lead-req>
+            <small class="hint">Required for team lead and regional manager. Make sure the link can be opened by anyone with it.</small></label>
           <input type="hidden" name="timezone">
 
-          <h3>2. The role</h3>
-          <div class="row2">
-            <label class="field"><span>Position *</span><select name="role" required><option value="">Choose one</option><option>Business-to-business specialist</option><option>Team lead</option><option>Either one</option></select></label>
-            <label class="field"><span>Hours per week you can work *</span><select name="hours" required><option value="">Choose one</option><option>Under 10</option><option>10 to 20</option><option>20 to 30</option><option>30 or more</option></select></label>
+          <h3>3. Availability</h3>
+          <div class="row3">
+            <label class="field "><span>Hours per week *</span><select name="hours" required><option value="">Choose one</option><option>Under 10</option><option>10 to 20</option><option>20 to 30</option><option>30 to 40</option><option>More than 40</option></select></label>
+            <label class="field "><span>When can you start? *</span><select name="start" required><option value="">Choose one</option><option>Right away</option><option>Within 2 weeks</option><option>Within a month</option><option>More than a month</option></select></label>
+            <label class="field "><span>Can you work the main calling window? *</span><select name="window_ok" required><option value="">Choose one</option><option>Yes, most days</option><option>Some days</option><option>No</option></select></label>
           </div>
-          <div class="row2">
-            <label class="field"><span>When can you start? *</span><select name="start" required><option value="">Choose one</option><option>Right away</option><option>Within 2 weeks</option><option>Within a month</option><option>More than a month</option></select></label>
-            <label class="field"><span>Can you work the main calling window? *</span><select name="window_ok" required><option value="">Choose one</option><option>Yes, most days</option><option>Some days</option><option>No</option></select>
-              <small class="hint" id="windowHint">Restaurants are easiest to reach from 2 to 4 p.m. Central Time.</small></label>
-          </div>
+          <small class="hint window-hint" id="windowHint">Restaurants are easiest to reach from 2 to 4 p.m. Central Time.</small>
+          <fieldset class="checks" data-group-req="days"><legend>Days you can work *</legend><label><input type="checkbox" name="days" value="Mon"> Mon</label><label><input type="checkbox" name="days" value="Tue"> Tue</label><label><input type="checkbox" name="days" value="Wed"> Wed</label><label><input type="checkbox" name="days" value="Thu"> Thu</label><label><input type="checkbox" name="days" value="Fri"> Fri</label><label><input type="checkbox" name="days" value="Sat"> Sat</label></fieldset>
+          <div class="yn-row one"><fieldset class="yn"><legend>Comfortable working as an independent contractor, paid by commission through Wise or Payoneer? *</legend><label><input type="radio" name="contractor_ok" value="Yes" required> Yes</label><label><input type="radio" name="contractor_ok" value="No"> No</label></fieldset></div>
 
-          <h3>3. Experience</h3>
-          <div class="row2">
-            <label class="field"><span>Years of sales experience *</span><select name="sales_years" required><option value="">Choose one</option><option>None yet</option><option>Less than 1 year</option><option>1 to 2 years</option><option>3 to 5 years</option><option>More than 5 years</option></select></label>
-            <label class="field"><span>English *</span><select name="english" required><option value="">Choose one</option><option>Native speaker</option><option>Fluent</option><option>Conversational</option></select></label>
+          <h3>4. Sales experience</h3>
+          <div class="row3">
+            <label class="field "><span>Years of sales experience *</span><select name="sales_years" required><option value="">Choose one</option><option>None yet</option><option>Less than 1 year</option><option>1 to 2 years</option><option>3 to 5 years</option><option>6 to 10 years</option><option>More than 10 years</option></select></label>
+            <label class="field "><span>Most calls you have made in a typical day *</span><select name="call_volume" required><option value="">Choose one</option><option>Never made sales calls daily</option><option>Under 25</option><option>25 to 50</option><option>50 to 100</option><option>More than 100</option></select></label>
+            <label class="field "><span>Have you worked with a sales quota? *</span><select name="quota" required><option value="">Choose one</option><option>Never had a quota</option><option>Yes, usually hit or beat it</option><option>Yes, sometimes hit it</option><option>Yes, rarely hit it</option></select></label>
           </div>
+          <div class="row2">
+            <label class="field "><span>Industries you have sold to *</span><input name="industries" required placeholder="For example: restaurants, insurance, logistics, software"></label>
+            <label class="field "><span>English *</span><select name="english" required><option value="">Choose one</option><option>Native speaker</option><option>Fluent</option><option>Conversational</option></select></label>
+          </div>
+          <fieldset class="checks"><legend>Sales tools you have used</legend><label><input type="checkbox" name="tools" value="Salesforce"> Salesforce</label><label><input type="checkbox" name="tools" value="HubSpot"> HubSpot</label><label><input type="checkbox" name="tools" value="Zoho"> Zoho</label><label><input type="checkbox" name="tools" value="Pipedrive"> Pipedrive</label><label><input type="checkbox" name="tools" value="Spreadsheets (Excel or Google Sheets)"> Spreadsheets (Excel or Google Sheets)</label><label><input type="checkbox" name="tools" value="A phone dialer app"> A phone dialer app</label>
+            <input class="tools-other" name="tools_other" placeholder="Other tools"></fieldset>
           <div class="yn-row">
             <fieldset class="yn"><legend>Sold to businesses before? *</legend><label><input type="radio" name="b2b" value="Yes" required> Yes</label><label><input type="radio" name="b2b" value="No"> No</label></fieldset>
             <fieldset class="yn"><legend>Cold calling experience? *</legend><label><input type="radio" name="cold_calling" value="Yes" required> Yes</label><label><input type="radio" name="cold_calling" value="No"> No</label></fieldset>
             <fieldset class="yn"><legend>Restaurant or food industry experience? *</legend><label><input type="radio" name="food_industry" value="Yes" required> Yes</label><label><input type="radio" name="food_industry" value="No"> No</label></fieldset>
           </div>
 
-          <h3>4. Recent work</h3>
-          <p class="muted-line">Your most recent job is required. If you have not worked before, write "None" and tell us about school or volunteer work instead.</p>
+          <h3>5. Work history</h3>
+          <p class="muted-line">If you have not worked before, write "None" and tell us about school or volunteer work.</p>
           <div class="job">
             <b class="job-title">Most recent job *</b>
             <div class="row3">
-              <label class="field"><span>Employer *</span><input name="job1_employer" required></label>
-              <label class="field"><span>Job title *</span><input name="job1_title" required></label>
-              <label class="field"><span>Dates *</span><input name="job1_dates" placeholder="Jan 2024 to now" required></label>
+              <label class="field "><span>Employer *</span><input name="job1_employer" required ></label>
+              <label class="field "><span>Job title *</span><input name="job1_title" required ></label>
+              <label class="field "><span>Dates *</span><input name="job1_dates" required placeholder="Jan 2024 to now"></label>
             </div>
-            <label class="field"><span>What did you do or sell? *</span><textarea name="job1_duties" rows="3" maxlength="600" required></textarea></label>
+            <label class="field "><span>Status *</span><select name="job1_status" required><option value="">Choose one</option><option>Still working there</option><option>Left to grow my career</option><option>Left: laid off or company closed</option><option>Left: contract ended</option><option>Left: other reason</option></select></label>
+            <label class="field"><span>What did you do or sell, and how did you perform? *</span><textarea name="job1_duties" rows="3" maxlength="600" required></textarea></label>
           </div>
           <div class="job">
             <b class="job-title">Previous job (optional)</b>
             <div class="row3">
-              <label class="field"><span>Employer</span><input name="job2_employer"></label>
-              <label class="field"><span>Job title</span><input name="job2_title"></label>
-              <label class="field"><span>Dates</span><input name="job2_dates" placeholder="2021 to 2023"></label>
+              <label class="field "><span>Employer</span><input name="job2_employer" ></label>
+              <label class="field "><span>Job title</span><input name="job2_title" ></label>
+              <label class="field "><span>Dates</span><input name="job2_dates" placeholder="2021 to 2023"></label>
             </div>
+            <label class="field "><span>Reason for leaving</span><input name="job2_reason" ></label>
             <label class="field"><span>What did you do or sell?</span><textarea name="job2_duties" rows="3" maxlength="600"></textarea></label>
           </div>
 
-          <h3>5. Your setup</h3>
-          <div class="yn-row">
+          <div class="leadership" id="leadership" hidden>
+            <h3>6. Leadership</h3>
+            <p class="muted-line">For team lead and regional manager applicants.</p>
+            <div class="row2">
+              <label class="field"><span>Years leading sales teams *</span><select name="lead_years" data-lead-req><option value="">Choose one</option><option>Never led a team</option><option>Less than 1 year</option><option>1 to 2 years</option><option>3 to 5 years</option><option>More than 5 years</option></select></label>
+              <label class="field"><span>Largest team you have managed *</span><select name="team_size" data-lead-req><option value="">Choose one</option><option>None</option><option>1 to 5 people</option><option>6 to 10 people</option><option>11 to 25 people</option><option>More than 25 people</option></select></label>
+            </div>
+            <div class="row2">
+              <fieldset class="yn"><legend>Have you recruited and hired people? *</legend><label><input type="radio" name="hired" value="Yes" data-lead-req> Yes</label><label><input type="radio" name="hired" value="No"> No</label></fieldset>
+              <label class="field"><span>How many people could you recruit in your first 30 days? *</span><select name="recruit_30" data-lead-req><option value="">Choose one</option><option>None yet</option><option>1 to 3</option><option>4 to 10</option><option>More than 10</option></select></label>
+            </div>
+            <div class="manager-only" id="managerOnly" hidden>
+              <div class="row2">
+                <fieldset class="yn"><legend>Have you managed other managers or team leads? *</legend><label><input type="radio" name="managed_managers" value="Yes" data-mgr-req> Yes</label><label><input type="radio" name="managed_managers" value="No"> No</label></fieldset>
+                <label class="field"><span>Territories or regions you have overseen *</span><input name="territories" data-mgr-req placeholder="For example: Central Illinois, 3 states"></label>
+              </div>
+            </div>
+            <label class="field"><span>How do you coach a rep who is struggling? *</span><textarea name="coaching" rows="3" maxlength="1000" data-lead-req></textarea></label>
+            <label class="field"><span>Which numbers do you track to know if a team is on track? *</span><textarea name="metrics" rows="2" maxlength="600" data-lead-req placeholder="For example: calls per day, conversations, quotes sent, close rate"></textarea></label>
+            <label class="field"><span>A rep on your team made 200 calls this week and closed nothing. What do you do? *</span><textarea name="scenario_rep" rows="3" maxlength="1000" data-lead-req></textarea></label>
+          </div>
+
+          <h3 class="num-skills">Skills check</h3>
+          <label class="field"><span>A restaurant owner says: "We already check our cooler temperatures by hand." What would you say? *</span><textarea name="scenario_owner" rows="3" maxlength="1000" required></textarea></label>
+          <label class="field"><span>Your biggest sales accomplishment. Include numbers if you can. *</span><textarea name="accomplishment" rows="3" maxlength="800" required placeholder="For example: closed 42 accounts in one quarter, 130% of quota"></textarea></label>
+
+          <h3 class="num-setup">Your setup</h3>
+          <div class="yn-row four">
             <fieldset class="yn"><legend>A computer or laptop? *</legend><label><input type="radio" name="computer" value="Yes" required> Yes</label><label><input type="radio" name="computer" value="No"> No</label></fieldset>
             <fieldset class="yn"><legend>A headset with a microphone? *</legend><label><input type="radio" name="headset" value="Yes" required> Yes</label><label><input type="radio" name="headset" value="No"> No</label></fieldset>
             <fieldset class="yn"><legend>Reliable internet? *</legend><label><input type="radio" name="internet" value="Yes" required> Yes</label><label><input type="radio" name="internet" value="No"> No</label></fieldset>
+            <fieldset class="yn"><legend>A quiet place to work? *</legend><label><input type="radio" name="quiet" value="Yes" required> Yes</label><label><input type="radio" name="quiet" value="No"> No</label></fieldset>
           </div>
 
-          <h3>6. Why you</h3>
+          <h3 class="num-refs">References</h3>
+          <p class="muted-line" id="refsNote">Optional for specialists. Required for team lead and regional manager: two professional references, such as a former manager or client.</p>
+          <div class="job">
+            <b class="job-title">Reference 1</b>
+            <div class="row3">
+              <label class="field"><span>Name <em class="lead-star">*</em></span><input name="ref1_name" data-lead-req></label>
+              <label class="field"><span>Relationship <em class="lead-star">*</em></span><input name="ref1_relation" data-lead-req placeholder="Former manager"></label>
+              <label class="field"><span>Phone or email <em class="lead-star">*</em></span><input name="ref1_contact" data-lead-req></label>
+            </div>
+          </div>
+          <div class="job">
+            <b class="job-title">Reference 2</b>
+            <div class="row3">
+              <label class="field"><span>Name <em class="lead-star">*</em></span><input name="ref2_name" data-lead-req></label>
+              <label class="field"><span>Relationship <em class="lead-star">*</em></span><input name="ref2_relation" data-lead-req placeholder="Former client"></label>
+              <label class="field"><span>Phone or email <em class="lead-star">*</em></span><input name="ref2_contact" data-lead-req></label>
+            </div>
+          </div>
+
+          <h3 class="num-why">Why you</h3>
           <label class="field"><span>Why would you be great at this? *</span><textarea name="why" rows="4" maxlength="1200" required placeholder="A few sentences about you and how you work with people"></textarea></label>
-          <div class="row3">
-            <label class="field"><span>LinkedIn or profile link</span><input name="profile_url" type="url" placeholder="https://"></label>
+          <div class="row2">
             <label class="field"><span>How did you hear about us?</span><select name="heard"><option value="">Choose one</option><option>Facebook</option><option>Instagram</option><option>LinkedIn</option><option>WhatsApp</option><option>A friend or someone on the team</option><option>Other</option></select></label>
             <label class="field"><span>Referral code (if someone referred you)</span><input name="ref" maxlength="14" autocomplete="off"></label>
           </div>
           <div class="hp-field" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
 
+          <label class="ack" id="refsAck" hidden><input type="checkbox" name="refs_ok"> I give Night Shift permission to contact my references. *</label>
           <label class="ack"><input type="checkbox" name="ack"> I understand this is an independent, commission-based role, and the information I gave is accurate. *</label>
           <button class="btn-m btn-ice full" type="submit">Submit application</button>
           <p class="form-msg" id="applyMsg" role="status"></p>

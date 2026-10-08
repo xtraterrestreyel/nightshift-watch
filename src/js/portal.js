@@ -622,13 +622,16 @@ async function pageTeams(body) {
 
 // ---------- Applications (owner) ----------
 const APP_LABELS = [
-  ['Contact', [['phone', 'Phone or WhatsApp'], ['contact_pref', 'Best way to reach'], ['timezone', 'Time zone']]],
-  ['Role and availability', [['role', 'Position'], ['hours', 'Hours per week'], ['start', 'Can start'], ['window_ok', 'Can work 2 to 4 p.m. Central']]],
-  ['Experience', [['sales_years', 'Years in sales'], ['b2b', 'Sold to businesses'], ['cold_calling', 'Cold calling'], ['food_industry', 'Restaurant or food industry'], ['english', 'English']]],
-  ['Most recent job', [['job1_employer', 'Employer'], ['job1_title', 'Title'], ['job1_dates', 'Dates'], ['job1_duties', 'What they did']]],
-  ['Previous job', [['job2_employer', 'Employer'], ['job2_title', 'Title'], ['job2_dates', 'Dates'], ['job2_duties', 'What they did']]],
-  ['Setup', [['computer', 'Computer'], ['headset', 'Headset with microphone'], ['internet', 'Reliable internet']]],
-  ['About them', [['why', 'Why they would be great'], ['profile_url', 'LinkedIn or profile'], ['heard', 'Heard about us'], ['ref', 'Referral code']]]
+  ['Contact', [['phone', 'Phone or WhatsApp'], ['contact_pref', 'Best way to reach'], ['timezone', 'Time zone'], ['resume_url', 'Resume or LinkedIn']]],
+  ['Availability', [['hours', 'Hours per week'], ['days', 'Days available'], ['start', 'Can start'], ['window_ok', 'Can work 2 to 4 p.m. Central'], ['contractor_ok', 'OK as independent contractor']]],
+  ['Sales experience', [['sales_years', 'Years in sales'], ['call_volume', 'Daily calls handled'], ['quota', 'Quota experience'], ['industries', 'Industries sold to'], ['tools', 'Tools used'], ['tools_other', 'Other tools'], ['b2b', 'Sold to businesses'], ['cold_calling', 'Cold calling'], ['food_industry', 'Restaurant or food industry'], ['english', 'English']]],
+  ['Most recent job', [['job1_employer', 'Employer'], ['job1_title', 'Title'], ['job1_dates', 'Dates'], ['job1_status', 'Status'], ['job1_duties', 'What they did']]],
+  ['Previous job', [['job2_employer', 'Employer'], ['job2_title', 'Title'], ['job2_dates', 'Dates'], ['job2_reason', 'Reason for leaving'], ['job2_duties', 'What they did']]],
+  ['Leadership', [['lead_years', 'Years leading teams'], ['team_size', 'Largest team'], ['hired', 'Has recruited and hired'], ['recruit_30', 'Could recruit in 30 days'], ['managed_managers', 'Managed other managers'], ['territories', 'Territories'], ['coaching', 'Coaching a struggling rep'], ['metrics', 'Numbers they track'], ['scenario_rep', '200 calls, no sales: what they do']]],
+  ['Skills check', [['scenario_owner', '"We already check temps by hand"'], ['accomplishment', 'Biggest sales accomplishment']]],
+  ['Setup', [['computer', 'Computer'], ['headset', 'Headset with microphone'], ['internet', 'Reliable internet'], ['quiet', 'Quiet place to work']]],
+  ['References', [['ref1_name', 'Reference 1'], ['ref1_relation', 'Relationship'], ['ref1_contact', 'Contact'], ['ref2_name', 'Reference 2'], ['ref2_relation', 'Relationship'], ['ref2_contact', 'Contact']]],
+  ['About them', [['why', 'Why they would be great'], ['heard', 'Heard about us'], ['ref', 'Referral code']]]
 ];
 async function pageApplications(body) {
   setHead('Applications', 'Everyone who applied on the careers page. Review, take notes, and invite the best fits.');
@@ -638,12 +641,15 @@ async function pageApplications(body) {
   const counts = {}; d.statuses.forEach(s => { counts[s] = apps.filter(a => a.status === s).length; });
   let filter = 'New';
   if (!counts.New) filter = '';
+  let position = '';
+  const positions = [...new Set(apps.map(a => a.role).filter(Boolean))];
   function draw() {
-    const list = apps.filter(a => !filter || a.status === filter);
+    const list = apps.filter(a => (!filter || a.status === filter) && (!position || a.role === position));
     body.innerHTML = `
       <div class="card filters app-filters">
         <button type="button" class="chip-btn ${!filter ? 'on' : ''}" data-filter="">All (${apps.length})</button>
         ${d.statuses.map(s => `<button type="button" class="chip-btn ${filter === s ? 'on' : ''}" data-filter="${esc(s)}">${esc(s)} (${counts[s]})</button>`).join('')}
+        <select class="mini-select pos-filter" aria-label="Filter by position"><option value="">All positions</option>${positions.map(p => `<option ${p === position ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
       </div>
       ${list.length ? list.map(a => {
         let x = {}; try { x = JSON.parse(a.data_json || '{}'); } catch (e) { /* ignore */ }
@@ -652,15 +658,19 @@ async function pageApplications(body) {
             <div><h2>${esc(a.name)}</h2><p class="muted small">${esc(a.role)} &middot; ${esc(a.location)}, ${esc(a.country)} &middot; applied ${esc(dateOnly(a.created_at))}</p>
               <p class="small"><a href="mailto:${esc(a.email)}">${esc(a.email)}</a> &middot; ${esc(a.phone || '')}</p></div>
             <div class="app-quick">
-              <span class="chip">${esc(x.sales_years || '')} in sales</span>
+              <span class="chip brand">${esc(a.role || 'Position not given')}</span>
+              <span class="chip">${esc(x.sales_years || '?')} in sales</span>
+              ${x.lead_years ? `<span class="chip">${esc(x.lead_years)} leading, ${esc(x.team_size || '?')}</span>` : ''}
+              ${x.quota ? `<span class="chip ${/usually/.test(x.quota) ? '' : 'warn'}">Quota: ${esc(x.quota.replace('Yes, ', ''))}</span>` : ''}
               <span class="chip ${x.cold_calling === 'Yes' ? '' : 'warn'}">Cold calling: ${esc(x.cold_calling || '?')}</span>
-              <span class="chip ${x.headset === 'Yes' && x.internet === 'Yes' ? '' : 'warn'}">Setup: ${x.computer === 'Yes' && x.headset === 'Yes' && x.internet === 'Yes' ? 'ready' : 'missing items'}</span>
+              <span class="chip ${x.computer === 'Yes' && x.headset === 'Yes' && x.internet === 'Yes' && x.quiet !== 'No' ? '' : 'warn'}">Setup: ${x.computer === 'Yes' && x.headset === 'Yes' && x.internet === 'Yes' && x.quiet !== 'No' ? 'ready' : 'missing items'}</span>
+              ${x.contractor_ok === 'No' ? '<span class="chip warn">Not OK with commission-only</span>' : ''}
             </div>
           </div>
           <details><summary>Full application</summary>
             <div class="app-grid">${APP_LABELS.map(([title, rows]) => {
               const shown = rows.filter(([k]) => x[k]);
-              return shown.length ? `<div><h4>${esc(title)}</h4><dl>${shown.map(([k, l]) => `<dt>${esc(l)}</dt><dd>${esc(x[k])}</dd>`).join('')}</dl></div>` : '';
+              return shown.length ? `<div><h4>${esc(title)}</h4><dl>${shown.map(([k, l]) => `<dt>${esc(l)}</dt><dd>${k === 'resume_url' && /^https?:\/\//i.test(x[k]) ? `<a href="${esc(x[k])}" target="_blank" rel="noopener">${esc(x[k])}</a>` : esc(x[k])}</dd>`).join('')}</dl></div>` : '';
             }).join('')}</div>
           </details>
           <div class="app-actions">
@@ -672,6 +682,7 @@ async function pageApplications(body) {
         </div>`;
       }).join('') : '<div class="card"><p class="muted">No applications with this status.</p></div>'}`;
     body.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => { filter = b.dataset.filter; draw(); }));
+    body.querySelector('.pos-filter').addEventListener('change', (e) => { position = e.target.value; draw(); });
     body.querySelectorAll('.app-card').forEach(card => {
       const id = parseInt(card.dataset.id, 10);
       const a = apps.find(x => x.id === id);
@@ -686,7 +697,7 @@ async function pageApplications(body) {
       });
       card.querySelector('.app-invite').addEventListener('click', async () => {
         try { if (a.status !== 'Invited') await api('/applications/update', { method: 'POST', body: { id, status: 'Invited' } }); } catch (e) { /* ignore */ }
-        invitePrefill = { name: a.name, email: a.email, role: /lead/i.test(a.role) ? 'lead' : 'rep' };
+        invitePrefill = { name: a.name, email: a.email, role: /lead|manager/i.test(a.role) ? 'lead' : 'rep' };
         go('invites');
       });
     });
