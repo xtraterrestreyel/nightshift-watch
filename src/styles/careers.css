@@ -44,11 +44,11 @@
 .role-card b { font-size: 15px; }
 .role-card span { font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
 .role-card.on { border-color: color-mix(in srgb, var(--brand) 70%, transparent); background: color-mix(in srgb, var(--brand) 12%, transparent); }
-.checks { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 4px 0 14px; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; background: color-mix(in srgb, var(--bg) 35%, transparent); }
-.checks legend { padding: 0 4px; font-size: 13.5px; font-weight: 500; color: var(--ink-soft); }
-.checks label { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; cursor: pointer; }
-.checks input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--brand); }
-.checks .tools-other { flex: 1; min-width: 180px; }
+.opt-group { flex-direction: row; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 4px 0 14px; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; background: color-mix(in srgb, var(--bg) 35%, transparent); }
+.opt-group legend { padding: 0 4px; font-size: 13.5px; font-weight: 500; color: var(--ink-soft); }
+.opt-group label { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; cursor: pointer; }
+.opt-group input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--brand); }
+.opt-group .tools-other { flex: 1; min-width: 180px; }
 .window-hint { margin: -6px 0 12px; }
 .yn-row.one { grid-template-columns: 1fr; }
 .yn-row.four { grid-template-columns: repeat(4, 1fr); }
