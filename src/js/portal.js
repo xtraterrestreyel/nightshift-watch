@@ -481,6 +481,7 @@ async function pageInvites(body) {
         <label class="field"><span>Team name</span><input name="team_name" placeholder="Team 1"></label>
         <label class="field"><span>Seats (reps they can invite)</span><input name="seat_limit" type="number" min="1" max="50" value="10"></label>
       </div>` : ''}
+      <label class="check-line"><input type="checkbox" name="send_email" checked> Email the invite to them from Night Shift (replies come to ${esc(CONFIG.salesEmail || 'the company inbox')})</label>
       <button class="btn-ice" type="submit">Create invite</button>
       <p class="form-msg" id="invMsg" role="status"></p>
       <div id="invResult"></div>
@@ -495,7 +496,9 @@ async function pageInvites(body) {
           <td>${i.status === 'open' && !expired ? `<button class="btn-quiet" type="button" data-cancel="${i.id}">Cancel</button>` : ''}</td></tr>`;
       }).join('')}</tbody></table></div>` : '<p class="muted">No invites yet.</p>'}</div>`;
   const f = document.getElementById('invForm');
+  let fromApplication = false;
   if (invitePrefill) {
+    fromApplication = true;
     f.querySelector('[name="name"]').value = invitePrefill.name;
     f.querySelector('[name="email"]').value = invitePrefill.email;
     if (owner && invitePrefill.role === 'lead') {
@@ -515,12 +518,16 @@ async function pageInvites(body) {
     const btn = f.querySelector('button[type="submit"]'); const msg = document.getElementById('invMsg');
     busy(btn, true, 'Creating...');
     try {
-      const r = await api('/invites', { method: 'POST', body: { role: d.role || 'rep', name: d.name, email: d.email, team_id: d.team_id, team_name: d.team_name, seat_limit: d.seat_limit } });
+      const r = await api('/invites', { method: 'POST', body: { role: d.role || 'rep', name: d.name, email: d.email, team_id: d.team_id, team_name: d.team_name, seat_limit: d.seat_limit, send_email: !!d.send_email, from_application: fromApplication } });
+      fromApplication = false;
       const link = SITE + 'portal.html?invite=' + r.token;
       const text = `Hi ${d.name}, here is your personal invitation to join the Night Shift team. It works once, only with this email (${d.email}), and expires in 7 days:\n${link}`;
-      msg.className = 'form-msg ok'; msg.textContent = 'Invite created.';
+      const sent = r.emailed === 'sent';
+      const why = { 'not verified': 'The nightshift.watch email address is not verified in Resend yet.', 'no key': 'The email key is not set up on the server.', 'failed': 'The email service did not accept it.' }[r.emailed];
+      msg.className = 'form-msg ' + (r.emailed === 'off' || sent ? 'ok' : 'error');
+      msg.textContent = sent ? `Invite created and emailed to ${d.email}.` : r.emailed === 'off' ? 'Invite created.' : `Invite created, but it could not be emailed. ${why || ''} Copy the link below and send it yourself.`;
       document.getElementById('invResult').innerHTML = `<div class="invite-result">
-        <p><b>Copy this link now.</b> For security it is shown only once. If it gets lost, cancel it and create a new one.</p>
+        <p><b>${sent ? 'Backup copy of the link.' : 'Copy this link now.'}</b> For security it is shown only once.${sent ? ' You do not need to send it; it is here in case their email does not arrive.' : ' If it gets lost, cancel it and create a new one.'}</p>
         <div class="copy-row"><input readonly value="${esc(link)}"><button class="btn-quiet" type="button" id="cpLink">Copy link</button></div>
         <label class="field"><span>Ready-to-send message</span><textarea class="mini-input" rows="3" readonly>${esc(text)}</textarea></label>
         <button class="btn-quiet" type="button" id="cpMsg">Copy message</button></div>`;

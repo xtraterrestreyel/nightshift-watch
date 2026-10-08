@@ -113,3 +113,7 @@ code { font-family: var(--ticket); font-size: 13px; color: var(--accent); }
 
 .pos-filter { margin-left: auto; }
 .app-grid dd a { word-break: break-all; }
+
+/* "Email the invite" option */
+.check-line { display: flex; align-items: flex-start; gap: 9px; margin: 4px 0 14px; font-size: 13.5px; color: var(--ink-soft); cursor: pointer; }
+.check-line input { margin-top: 3px; accent-color: var(--brand); }
