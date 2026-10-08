@@ -3,6 +3,7 @@ import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
 import { AGREEMENT } from './agreement.js';
 import QRCode from 'qrcode';
+import { initVisitorCounter } from './counter.js';
 
 const API = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '') + '/api/portal';
 const TOKEN_KEY = 'nightshift.portal.token';
@@ -727,3 +728,6 @@ if (!CONFIG.apiBaseUrl) {
   const invite = new URLSearchParams(location.search).get('invite');
   if (invite) renderRegister(invite); else start();
 }
+
+// Visitor counter and globe in the footer (same as every other page)
+initVisitorCounter();

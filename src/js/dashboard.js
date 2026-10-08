@@ -3,6 +3,7 @@ import { initThemeToggle } from './theme.js';
 import { getSession, startDemo, logout } from './auth.js';
 import { createInventory } from './inventory.js';
 import { captureRef, visitorId } from './ref.js';
+import { initVisitorCounter } from './counter.js';
 
 // Credit demo views to the rep whose link brought the visitor (once per browser session).
 (function trackDemoView() {
@@ -592,3 +593,6 @@ function runDashboard(session) {
   renderSummary();
   setInterval(tick, 900);
 }
+
+// Visitor counter and globe in the footer (same as every other page)
+initVisitorCounter();

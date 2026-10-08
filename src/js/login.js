@@ -1,6 +1,7 @@
 import { login, startDemo, getSession } from './auth.js';
 import { initThemeToggle } from './theme.js';
 import { makeFlakes } from './effects.js';
+import { initVisitorCounter } from './counter.js';
 
 initThemeToggle();
 
@@ -25,3 +26,7 @@ document.getElementById('demoBtn').addEventListener('click', () => {
   startDemo();
   window.location.href = './dashboard.html';
 });
+
+// Visitor counter and globe in the footer (same as every other page)
+{ const y = document.getElementById('year'); if (y) y.textContent = new Date().getFullYear(); }
+initVisitorCounter();

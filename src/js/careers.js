@@ -3,6 +3,7 @@ import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
 import { makeFlakes } from './effects.js';
 import { captureRef, getRef } from './ref.js';
+import { initVisitorCounter } from './counter.js';
 
 initThemeToggle();
 makeFlakes();
@@ -135,3 +136,6 @@ form.addEventListener('submit', async (e) => {
     btn.disabled = false; btn.textContent = label;
   }
 });
+
+// Visitor counter and globe in the footer (same as every other page)
+initVisitorCounter();

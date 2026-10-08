@@ -3,6 +3,51 @@
 import { CONFIG } from './config.js';
 import { STATE_CENTERS, COUNTRY_CENTERS } from './places.js';
 import { captureRef, visitorId } from './ref.js';
+import '../styles/counter.css';
+
+// The counter's markup, shared by every page. It goes inside any element marked
+// data-vc-mount; pages without one get a small footer added at the bottom.
+const MARKUP = `
+  <button class="vc-btn" type="button" aria-expanded="false" aria-haspopup="dialog">
+    <span class="pulse" aria-hidden="true"></span>
+    <b data-vc-total>0</b> <span data-vc-word>visitors</span>
+    <svg class="vc-globe-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>
+  </button>
+  <div class="vc-pop" role="dialog" aria-label="Where visitors are from">
+    <h4>Where visitors are from</h4>
+    <p class="vc-preview" data-vc-preview hidden>Preview: sample data, not real visitors</p>
+    <div class="vc-globe-wrap">
+      <canvas data-vc-globe aria-hidden="true"></canvas>
+      <span class="vc-loading" data-vc-loading hidden>Loading the globe...</span>
+    </div>
+    <ul class="vc-list" data-vc-regions></ul>
+    <div class="vc-locs-head"><span>All locations</span><span data-vc-loc-count></span></div>
+    <ul class="vc-locs" data-vc-locs></ul>
+    <p class="vc-hint">Hover over or tap a place to find it on the globe.</p>
+    <p class="vc-note">Counted by country and state, province, or region only. We never store IP addresses or anything that identifies you.</p>
+  </div>`;
+
+function mountCounter() {
+  let box = document.querySelector('[data-visitor-counter]');
+  if (box) return box;
+  let mount = document.querySelector('[data-vc-mount]');
+  if (!mount) {
+    const foot = document.createElement('footer');
+    foot.className = 'vc-foot';
+    foot.innerHTML = '<span>Part of the <b>COOKd Kitchen</b> family. &copy; ' + new Date().getFullYear() + ' Night Shift</span><div data-vc-mount></div>';
+    const wrap = document.querySelector('.site-wrap') || document.body;
+    const before = wrap === document.body ? document.querySelector('body > .toast, body > script') : null;
+    wrap.insertBefore(foot, before);
+    mount = foot.querySelector('[data-vc-mount]');
+  }
+  box = document.createElement('div');
+  box.className = 'visitors';
+  box.setAttribute('data-visitor-counter', '');
+  box.hidden = true;
+  box.innerHTML = MARKUP;
+  mount.replaceWith(box);
+  return box;
+}
 
 const ORDER = ['Midwest', 'South', 'West', 'Northeast', 'Outside the US', 'Unknown'];
 const LABEL = { 'Unknown': 'Location unknown' };
@@ -154,10 +199,11 @@ function openGlobe(box) {
 }
 
 export function initVisitorCounter() {
-  const box = document.querySelector('[data-visitor-counter]');
-  if (!box) return;
+  if (initVisitorCounter.done) return;
+  initVisitorCounter.done = true;
   const base = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '');
   if (!base && !PREVIEW) return;
+  const box = mountCounter();
 
   const show = (d) => { data = d; renderText(box, d); box.hidden = false; };
 
@@ -189,7 +235,9 @@ export function initVisitorCounter() {
     clearTimeout(closeTimer);
     if (box.classList.contains('open') || !data) return;
     const rect = box.getBoundingClientRect();
-    box.classList.toggle('align-right', rect.left + rect.width / 2 > window.innerWidth / 2);
+    const mid = rect.left + rect.width / 2, half = 170;
+    box.classList.toggle('align-right', mid + half > window.innerWidth - 8 && mid > window.innerWidth / 2);
+    box.classList.toggle('align-left', mid - half < 8 && mid <= window.innerWidth / 2);
     box.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
     openGlobe(box);
   };
