@@ -2,7 +2,7 @@
 import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
 import { AGREEMENT } from './agreement.js';
-import QRCode from 'qrcode';
+import { drawQrCard } from './qrcard.js';
 import { initVisitorCounter } from './counter.js';
 
 const API = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '') + '/api/portal';
@@ -245,7 +245,7 @@ async function pageLink(body) {
         <label class="field"><span>Live demo link (good for texting owners)</span><div class="copy-row"><input readonly value="${esc(demoLink)}"><button class="btn-quiet" type="button" data-copy="${esc(demoLink)}">Copy</button></div></label>
         <p class="muted small">Visitors are credited to you for 90 days after they first use your link, even if they come back later. Owners can also type your code into the quote form.</p>
       </div>
-      <div class="qr-box"><canvas id="qr" aria-label="QR code for your website link"></canvas><button class="btn-quiet" type="button" id="qrSave">Download QR code</button></div>
+      <div class="qr-box"><canvas id="qr" class="qr-card" aria-label="Night Shift QR code for your website link"></canvas><button class="btn-quiet" type="button" id="qrSave">Download QR code</button></div>
     </div>
     <div class="stats">
       ${statCard('Unique visitors', fmt(t.uniques), 'People who used your link')}
@@ -257,7 +257,7 @@ async function pageLink(body) {
     <div class="card muted-card"><h2>Clients and commissions</h2><p class="muted">When sales open, your signed clients, upfront commissions, and monthly residuals will appear here.</p></div>`;
   body.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copy(b.dataset.copy, 'Link copied')));
   const canvas = document.getElementById('qr');
-  await QRCode.toCanvas(canvas, siteLink, { width: 200, margin: 1, color: { dark: '#03111E', light: '#FFFFFF' } });
+  await drawQrCard(canvas, { link: siteLink, code });
   document.getElementById('qrSave').addEventListener('click', () => {
     const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = 'night-shift-' + code + '-qr.png'; a.click();
   });
