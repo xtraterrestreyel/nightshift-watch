@@ -16,8 +16,15 @@ const SAMPLE = {
   regions: [{ region: 'Midwest', n: 168 }, { region: 'South', n: 71 }, { region: 'West', n: 38 }, { region: 'Northeast', n: 21 }, { region: 'Outside the US', n: 14 }],
   states: [{ state: 'Illinois', n: 121 }, { state: 'Indiana', n: 22 }, { state: 'Texas', n: 31 }, { state: 'Georgia', n: 18 }, { state: 'California', n: 20 },
     { state: 'Ohio', n: 15 }, { state: 'New York', n: 13 }, { state: 'Florida', n: 12 }, { state: 'Washington', n: 9 }, { state: 'Colorado', n: 6 }],
-  countries: [{ country: 'US', n: 298 }, { country: 'CA', n: 5 }, { country: 'GB', n: 4 }, { country: 'NG', n: 3 }, { country: 'IN', n: 2 }]
+  countries: [{ country: 'US', n: 298 }, { country: 'CA', n: 5 }, { country: 'GB', n: 4 }, { country: 'NG', n: 3 }, { country: 'IN', n: 2 }],
+  areas: [{ country: 'CA', area: 'Ontario', lat: 43.5, lng: -79.5, n: 3 }, { country: 'CA', area: 'Quebec', lat: 45.5, lng: -73.5, n: 2 },
+    { country: 'GB', area: 'England', lat: 51.5, lng: 0, n: 2 }, { country: 'GB', area: 'Scotland', lat: 56, lng: -3, n: 1 },
+    { country: 'NG', area: 'Lagos', lat: 6.5, lng: 3.5, n: 3 }, { country: 'IN', area: 'Maharashtra', lat: 19, lng: 73, n: 1 },
+    { country: 'IN', area: 'Karnataka', lat: 13, lng: 77.5, n: 1 }]
 };
+
+// Most areas the globe will light up at once, so a busy map stays readable.
+const MAX_AREA_DOTS = 150;
 
 let data = null;
 let globe = null;
@@ -27,19 +34,48 @@ function countryName(code) {
   try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code; } catch (e) { return code; }
 }
 
+// Areas outside the U.S. (province, state, or region), grouped by country, busiest first.
+function areasByCountry(d) {
+  const by = {};
+  (d.areas || []).forEach(a => {
+    if (!a || !a.country || a.country === 'US' || !a.area || !(a.n > 0)) return;
+    (by[a.country] = by[a.country] || []).push(a);
+  });
+  Object.values(by).forEach(list => list.sort((x, y) => y.n - x.n));
+  return by;
+}
+
+// Where an area sits on the globe; falls back to its country's center.
+function areaPoint(a) {
+  if (a.lat != null && a.lng != null && isFinite(a.lat) && isFinite(a.lng)) return [Number(a.lat), Number(a.lng)];
+  return COUNTRY_CENTERS[a.country] || null;
+}
+
 function globeTargets(d) {
   const out = [];
   const states = d.states || d.topStates || [];
   states.forEach(s => { const c = STATE_CENTERS[s.state]; if (c) out.push({ lat: c[0], lng: c[1], count: s.n }); });
+  const byCountry = areasByCountry(d);
+  let areaDots = 0;
   (d.countries || []).forEach(c => {
     if (c.country === 'US') return; // US visitors light up their states instead
-    const p = COUNTRY_CENTERS[c.country];
-    if (p) out.push({ lat: p[0], lng: p[1], count: c.n });
+    const center = COUNTRY_CENTERS[c.country];
+    let placed = 0;
+    (byCountry[c.country] || []).forEach(a => {
+      if (areaDots >= MAX_AREA_DOTS) return;
+      const p = areaPoint(a);
+      if (!p) return;
+      out.push({ lat: p[0], lng: p[1], count: a.n });
+      placed += a.n; areaDots++;
+    });
+    // Visitors from before areas were recorded (or past the dot limit) stay at the country's center
+    const rest = c.n - placed;
+    if (rest > 0 && center) out.push({ lat: center[0], lng: center[1], count: rest });
   });
   return out;
 }
 
-// Every location with visitors: US states first, then other countries, then unknown.
+// Every location with visitors: US states first, then other countries with their areas, then unknown.
 function allLocations(d) {
   const list = [];
   const states = (d.states || d.topStates || []).slice().sort((x, y) => y.n - x.n);
@@ -47,19 +83,32 @@ function allLocations(d) {
   states.forEach(st => {
     stateSum += st.n;
     const c = STATE_CENTERS[st.state];
-    list.push({ name: st.state, sub: 'United States', n: st.n, lat: c ? c[0] : null, lng: c ? c[1] : null });
+    list.push({ name: st.state, sub: 'United States', n: st.n, lat: c ? c[0] : null, lng: c ? c[1] : null, place: true });
   });
   const countries = (d.countries || []).slice().sort((x, y) => y.n - x.n);
   const us = countries.find(c => c.country === 'US');
   if (us && us.n > stateSum) {
     const p = COUNTRY_CENTERS.US;
-    list.push({ name: 'United States', sub: 'state not identified', n: us.n - stateSum, lat: p[0], lng: p[1] });
+    list.push({ name: 'United States', sub: 'state not identified', n: us.n - stateSum, lat: p[0], lng: p[1], place: true });
   }
+  const byCountry = areasByCountry(d);
   countries.filter(c => c.country !== 'US').forEach(c => {
     const p = COUNTRY_CENTERS[c.country];
-    list.push({ name: countryName(c.country), sub: p ? '' : 'not on the globe yet', n: c.n, lat: p ? p[0] : null, lng: p ? p[1] : null });
+    const areas = byCountry[c.country] || [];
+    const name = countryName(c.country);
+    list.push({ name, sub: p ? (areas.length ? areas.length + (areas.length === 1 ? ' area' : ' areas') : '') : 'not on the globe yet',
+      n: c.n, lat: p ? p[0] : null, lng: p ? p[1] : null, place: !areas.length, country: true });
+    let inAreas = 0;
+    areas.forEach(a => {
+      inAreas += a.n;
+      const q = areaPoint(a);
+      list.push({ name: a.area, sub: name, n: a.n, lat: q ? q[0] : null, lng: q ? q[1] : null, place: true, child: true });
+    });
+    if (areas.length && c.n > inAreas) {
+      list.push({ name: 'Area not recorded', sub: name, n: c.n - inAreas, lat: p ? p[0] : null, lng: p ? p[1] : null, child: true });
+    }
   });
-  const listed = list.reduce((a, x) => a + x.n, 0);
+  const listed = list.filter(x => !x.child).reduce((a, x) => a + x.n, 0);
   if ((d.total || 0) > listed) list.push({ name: 'Location unknown', sub: '', n: d.total - listed, lat: null, lng: null });
   return list;
 }
@@ -76,10 +125,10 @@ function renderText(box, d) {
   }).join('') || '<li class="vc-empty">Region data is on its way.</li>';
 
   const locs = allLocations(d);
-  const places = locs.filter(l => l.name !== 'Location unknown').length;
+  const places = locs.filter(l => l.place).length;
   box.querySelector('[data-vc-loc-count]').textContent = places + (places === 1 ? ' location' : ' locations');
   box.querySelector('[data-vc-locs]').innerHTML = locs.map(l => `
-    <li><button type="button" class="vc-loc${l.lat == null ? ' no-map' : ''}" ${l.lat == null ? '' : `data-lat="${l.lat}" data-lng="${l.lng}"`}>
+    <li${l.child ? ' class="vc-sub"' : ''}><button type="button" class="vc-loc${l.lat == null ? ' no-map' : ''}${l.child ? ' child' : ''}${l.country ? ' parent' : ''}" ${l.lat == null ? '' : `data-lat="${l.lat}" data-lng="${l.lng}"`}>
       <span class="vc-loc-name">${esc(l.name)}${l.sub ? `<small>${esc(l.sub)}</small>` : ''}</span>
       <span class="vc-loc-n">${fmt(l.n)}</span>
     </button></li>`).join('') || '<li class="vc-empty">No locations yet.</li>';
