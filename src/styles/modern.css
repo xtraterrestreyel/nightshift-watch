@@ -36,6 +36,8 @@ body.site { background: var(--bg); color: var(--ink); overflow-x: hidden; font-s
 }
 
 /* ---------- Glass header ---------- */
+/* The header stays pinned at the top; leave room so jumped-to sections are not hidden under it */
+html { scroll-padding-top: calc(88px + env(safe-area-inset-top, 0px)); }
 .glass-nav {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
   background: color-mix(in srgb, var(--bg) 70%, transparent);
