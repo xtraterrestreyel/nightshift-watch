@@ -13,7 +13,8 @@ export default defineConfig({
         main: resolve(root, 'index.html'),
         login: resolve(root, 'login.html'),
         dashboard: resolve(root, 'dashboard.html'),
-        portal: resolve(root, 'portal.html')
+        portal: resolve(root, 'portal.html'),
+        careers: resolve(root, 'careers.html')
       }
     }
   }

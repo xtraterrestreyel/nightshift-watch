@@ -92,3 +92,21 @@ code { font-family: var(--ticket); font-size: 13px; color: var(--accent); }
 .town-cell { min-width: 190px; }
 .town-cell .besttime { display: block; width: 100%; font-size: 13px; line-height: 1.35; padding: 6px 8px; resize: vertical; min-height: 44px; }
 .call-window { padding: 14px 18px; font-size: 14px; border-color: color-mix(in srgb, var(--ice) 30%, var(--line)); background: color-mix(in srgb, var(--brand) 8%, color-mix(in srgb, var(--surface) 70%, transparent)); }
+
+.app-filters { gap: 8px; }
+.chip-btn { font: inherit; font-size: 13px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer; }
+.chip-btn.on { color: var(--ink); border-color: color-mix(in srgb, var(--brand) 60%, transparent); background: color-mix(in srgb, var(--brand) 14%, transparent); }
+.app-card { display: flex; flex-direction: column; gap: 12px; }
+.app-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.app-head h2 { margin: 0 0 4px; font-size: 19px; }
+.app-head p { margin: 0 0 3px; }
+.app-quick { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; }
+.app-card details summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--accent); }
+.app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 12px; }
+.app-grid h4 { margin: 0 0 6px; font-size: 13.5px; }
+.app-grid dl { margin: 0; font-size: 13.5px; }
+.app-grid dt { color: var(--ink-soft); font-size: 12px; margin-top: 6px; }
+.app-grid dd { margin: 1px 0 0; white-space: pre-wrap; }
+.app-actions { display: grid; grid-template-columns: 160px 1fr auto auto; gap: 10px; align-items: start; }
+.app-actions .app-notes { resize: vertical; }
+@media (max-width: 700px) { .app-actions { grid-template-columns: 1fr; } }

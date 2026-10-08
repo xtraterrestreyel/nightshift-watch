@@ -1,0 +1,39 @@
+/* Careers page */
+.careers-hero { padding-top: 56px; padding-bottom: 28px; max-width: 980px; }
+.careers-hero h1 { font-weight: 700; font-size: clamp(36px, 5.5vw, 58px); line-height: 1.05; letter-spacing: -.035em; margin: 20px 0 16px; }
+.careers-hero .lead { font-size: 18px; line-height: 1.6; color: var(--ink-soft); max-width: 46em; margin: 0 0 26px; }
+.perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.perk { padding: 18px; border-radius: 18px; display: flex; flex-direction: column; gap: 6px; }
+.perk b { font-size: 15px; }
+.perk span { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+.fine-print { margin: 16px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+.apply-form, .apply-done { padding: 30px; max-width: 980px; margin: 0 auto 80px; }
+.apply-form h2, .apply-done h2 { margin: 0 0 6px; font-size: 26px; letter-spacing: -.02em; }
+.apply-form h3 { margin: 28px 0 12px; font-size: 17px; padding-top: 18px; border-top: 1px solid var(--line); }
+.apply-form h3:first-of-type { border-top: 0; padding-top: 0; }
+.muted-line { margin: 0 0 14px; color: var(--ink-soft); font-size: 14px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 16px; }
+.apply-form .field { margin-bottom: 14px; }
+.apply-form textarea, .apply-form select, .apply-form input:not([type="radio"]):not([type="checkbox"]) {
+  width: 100%; font: inherit; font-size: 15px; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 50%, transparent); color: var(--ink);
+}
+.apply-form textarea { resize: vertical; }
+.hint { display: block; font-size: 12.5px; color: var(--ink-soft); margin-top: 5px; line-height: 1.4; }
+.yn-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 6px; }
+.yn { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 0; background: color-mix(in srgb, var(--bg) 35%, transparent); }
+.yn legend { padding: 0 4px; font-size: 13.5px; font-weight: 500; color: var(--ink-soft); }
+.yn label { display: inline-flex; align-items: center; gap: 7px; margin-right: 18px; font-size: 15px; cursor: pointer; }
+.yn input, .ack input { width: 17px; height: 17px; accent-color: var(--brand); }
+.job { border: 1px solid var(--line); border-radius: 16px; padding: 16px 16px 4px; margin-bottom: 14px; background: color-mix(in srgb, var(--bg) 25%, transparent); }
+.job-title { display: block; margin-bottom: 10px; font-size: 14.5px; }
+.ack { display: flex; gap: 10px; align-items: flex-start; margin: 22px 0 18px; font-size: 14.5px; line-height: 1.5; }
+.ack input { margin-top: 3px; flex: none; }
+.apply-form .full { width: 100%; }
+.apply-done p { color: var(--ink-soft); margin: 0 0 20px; line-height: 1.6; }
+@media (max-width: 900px) { .perks { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) {
+  .perks, .row2, .row3, .yn-row { grid-template-columns: 1fr; }
+  .apply-form, .apply-done { padding: 22px 18px; }
+}

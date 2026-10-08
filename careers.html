@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>try { if (localStorage.getItem('nightshift.theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}</script>
+  <title>Careers | Night Shift by COOKd Kitchen</title>
+  <meta name="description" content="Join the Night Shift sales team as a business-to-business specialist or team lead. Commission-based, independent, remote.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles/theme.css">
+  <link rel="stylesheet" href="./src/styles/base.css">
+  <link rel="stylesheet" href="./src/styles/modern.css">
+  <link rel="stylesheet" href="./src/styles/landing.css">
+  <link rel="stylesheet" href="./src/styles/careers.css">
+</head>
+<body class="site">
+  <div class="bg" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    <div class="frost"></div>
+    <div id="flakes"></div>
+  </div>
+
+  <div class="site-wrap">
+    <header class="glass-nav">
+      <div class="wrap inner">
+        <a class="brand-link" href="./index.html">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9.5 3.8L12 5.5l2.5-1.7M9.5 20.2L12 18.5l2.5 1.7"/></svg></span>
+          <span><b>COOKd Kitchen</b><small>ColdCheck</small></span>
+        </a>
+        <nav class="nav-links">
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+          <a href="index.html#how">How it works</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="./login.html">Log in</a>
+          <a class="btn-m btn-ice btn-sm" href="index.html#quote">Get a quote</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="wrap careers-hero">
+        <span class="pill"><span class="pulse"></span>Now recruiting</span>
+        <h1>Join the Night Shift team</h1>
+        <p class="lead">We help restaurants protect their food with sensors that text the owner the moment a cooler or freezer starts warming up. We're building a sales team of business-to-business specialists and team leads to bring it to kitchens across the country.</p>
+        <div class="perks">
+          <div class="glass perk"><b>Your own dashboard</b><span>Personal referral link, QR code, and live stats on every visit, demo view, and quote request.</span></div>
+          <div class="glass perk"><b>Leads provided</b><span>Assigned to you with who to ask for and the best time to call.</span></div>
+          <div class="glass perk"><b>Commission plus residuals</b><span>Commission on every sale, plus monthly residuals while your customers stay.</span></div>
+          <div class="glass perk"><b>Work remotely</b><span>In-browser calling from a local US number is coming soon.</span></div>
+        </div>
+        <p class="fine-print">This is an independent, commission-based role. Applications take about 5 minutes.</p>
+      </section>
+
+      <section class="wrap">
+        <form class="glass apply-form" id="applyForm" novalidate>
+          <h2>Application</h2>
+          <p class="muted-line">Fields marked with * are required.</p>
+
+          <h3>1. About you</h3>
+          <div class="row2">
+            <label class="field"><span>Full name *</span><input name="name" autocomplete="name" required></label>
+            <label class="field"><span>Email *</span><input name="email" type="email" autocomplete="email" required></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>Phone or WhatsApp number *</span><input name="phone" type="tel" autocomplete="tel" placeholder="Include country code, like +1 or +234" required></label>
+            <label class="field"><span>Best way to reach you</span><select name="contact_pref"><option>Email</option><option>Phone call</option><option>WhatsApp</option><option>Text message</option></select></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>Country *</span><input name="country" list="countries" autocomplete="country-name" required>
+              <datalist id="countries"><option>United States</option><option>Nigeria</option><option>Ghana</option><option>Kenya</option><option>South Africa</option><option>Philippines</option><option>India</option><option>United Kingdom</option><option>Canada</option><option>Jamaica</option></datalist></label>
+            <label class="field"><span>City and state or region *</span><input name="location" autocomplete="address-level2" required></label>
+          </div>
+          <input type="hidden" name="timezone">
+
+          <h3>2. The role</h3>
+          <div class="row2">
+            <label class="field"><span>Position *</span><select name="role" required><option value="">Choose one</option><option>Business-to-business specialist</option><option>Team lead</option><option>Either one</option></select></label>
+            <label class="field"><span>Hours per week you can work *</span><select name="hours" required><option value="">Choose one</option><option>Under 10</option><option>10 to 20</option><option>20 to 30</option><option>30 or more</option></select></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>When can you start? *</span><select name="start" required><option value="">Choose one</option><option>Right away</option><option>Within 2 weeks</option><option>Within a month</option><option>More than a month</option></select></label>
+            <label class="field"><span>Can you work the main calling window? *</span><select name="window_ok" required><option value="">Choose one</option><option>Yes, most days</option><option>Some days</option><option>No</option></select>
+              <small class="hint" id="windowHint">Restaurants are easiest to reach from 2 to 4 p.m. Central Time.</small></label>
+          </div>
+
+          <h3>3. Experience</h3>
+          <div class="row2">
+            <label class="field"><span>Years of sales experience *</span><select name="sales_years" required><option value="">Choose one</option><option>None yet</option><option>Less than 1 year</option><option>1 to 2 years</option><option>3 to 5 years</option><option>More than 5 years</option></select></label>
+            <label class="field"><span>English *</span><select name="english" required><option value="">Choose one</option><option>Native speaker</option><option>Fluent</option><option>Conversational</option></select></label>
+          </div>
+          <div class="yn-row">
+            <fieldset class="yn"><legend>Sold to businesses before? *</legend><label><input type="radio" name="b2b" value="Yes" required> Yes</label><label><input type="radio" name="b2b" value="No"> No</label></fieldset>
+            <fieldset class="yn"><legend>Cold calling experience? *</legend><label><input type="radio" name="cold_calling" value="Yes" required> Yes</label><label><input type="radio" name="cold_calling" value="No"> No</label></fieldset>
+            <fieldset class="yn"><legend>Restaurant or food industry experience? *</legend><label><input type="radio" name="food_industry" value="Yes" required> Yes</label><label><input type="radio" name="food_industry" value="No"> No</label></fieldset>
+          </div>
+
+          <h3>4. Recent work</h3>
+          <p class="muted-line">Your most recent job is required. If you have not worked before, write "None" and tell us about school or volunteer work instead.</p>
+          <div class="job">
+            <b class="job-title">Most recent job *</b>
+            <div class="row3">
+              <label class="field"><span>Employer *</span><input name="job1_employer" required></label>
+              <label class="field"><span>Job title *</span><input name="job1_title" required></label>
+              <label class="field"><span>Dates *</span><input name="job1_dates" placeholder="Jan 2024 to now" required></label>
+            </div>
+            <label class="field"><span>What did you do or sell? *</span><textarea name="job1_duties" rows="3" maxlength="600" required></textarea></label>
+          </div>
+          <div class="job">
+            <b class="job-title">Previous job (optional)</b>
+            <div class="row3">
+              <label class="field"><span>Employer</span><input name="job2_employer"></label>
+              <label class="field"><span>Job title</span><input name="job2_title"></label>
+              <label class="field"><span>Dates</span><input name="job2_dates" placeholder="2021 to 2023"></label>
+            </div>
+            <label class="field"><span>What did you do or sell?</span><textarea name="job2_duties" rows="3" maxlength="600"></textarea></label>
+          </div>
+
+          <h3>5. Your setup</h3>
+          <div class="yn-row">
+            <fieldset class="yn"><legend>A computer or laptop? *</legend><label><input type="radio" name="computer" value="Yes" required> Yes</label><label><input type="radio" name="computer" value="No"> No</label></fieldset>
+            <fieldset class="yn"><legend>A headset with a microphone? *</legend><label><input type="radio" name="headset" value="Yes" required> Yes</label><label><input type="radio" name="headset" value="No"> No</label></fieldset>
+            <fieldset class="yn"><legend>Reliable internet? *</legend><label><input type="radio" name="internet" value="Yes" required> Yes</label><label><input type="radio" name="internet" value="No"> No</label></fieldset>
+          </div>
+
+          <h3>6. Why you</h3>
+          <label class="field"><span>Why would you be great at this? *</span><textarea name="why" rows="4" maxlength="1200" required placeholder="A few sentences about you and how you work with people"></textarea></label>
+          <div class="row3">
+            <label class="field"><span>LinkedIn or profile link</span><input name="profile_url" type="url" placeholder="https://"></label>
+            <label class="field"><span>How did you hear about us?</span><select name="heard"><option value="">Choose one</option><option>Facebook</option><option>Instagram</option><option>LinkedIn</option><option>WhatsApp</option><option>A friend or someone on the team</option><option>Other</option></select></label>
+            <label class="field"><span>Referral code (if someone referred you)</span><input name="ref" maxlength="14" autocomplete="off"></label>
+          </div>
+          <div class="hp-field" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
+
+          <label class="ack"><input type="checkbox" name="ack"> I understand this is an independent, commission-based role, and the information I gave is accurate. *</label>
+          <button class="btn-m btn-ice full" type="submit">Submit application</button>
+          <p class="form-msg" id="applyMsg" role="status"></p>
+        </form>
+
+        <div class="glass apply-done" id="applyDone" hidden>
+          <h2>Application received</h2>
+          <p>Thank you for applying to join Night Shift. We review every application and will reach out to the people who are the best fit.</p>
+          <a class="btn-m btn-glass" href="index.html">Back to the home page</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <span>Part of the <b>COOKd Kitchen</b> family. &copy; <span id="year"></span> ColdCheck &middot; <a href="portal.html">Team sign in</a></span>
+        <span><a href="index.html">Home</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="./src/js/careers.js"></script>
+</body>
+</html>

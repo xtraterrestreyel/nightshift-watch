@@ -20,6 +20,7 @@ try { token = localStorage.getItem(TOKEN_KEY); } catch (e) { /* ignore */ }
 let me = null;
 let page = null;
 let cache = {};
+let invitePrefill = null; // filled when the owner clicks Create invite on an application
 
 // ---------- API ----------
 async function api(path, opts = {}) {
@@ -168,11 +169,12 @@ function agreementHtml() {
 
 // ---------- App shell ----------
 const NAV = {
-  owner: [['overview', 'Overview'], ['people', 'People'], ['invites', 'Invites'], ['teams', 'Teams'], ['quotes', 'Quote requests'], ['leads', 'Leads']],
+  owner: [['overview', 'Overview'], ['applications', 'Applications'], ['people', 'People'], ['invites', 'Invites'], ['teams', 'Teams'], ['quotes', 'Quote requests'], ['leads', 'Leads']],
   lead: [['link', 'My link'], ['team', 'My team'], ['invites', 'Invites'], ['leads', 'Leads'], ['quotes', 'Quote requests'], ['agreement', 'Agreement']],
   rep: [['link', 'My link'], ['quotes', 'Quote requests'], ['leads', 'My leads'], ['agreement', 'Agreement']]
 };
 const ICON = {
+  applications: '<path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M8 12h8M8 16h5"/>',
   overview: '<rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/>',
   link: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
   people: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5a5 5 0 0 1 5.5 5"/>',
@@ -215,7 +217,7 @@ function go(p) {
   const body = document.getElementById('pageBody');
   body.innerHTML = '<div class="card"><p class="muted">Loading...</p></div>';
   window.scrollTo(0, 0);
-  const pages = { overview: pageOwnerOverview, people: pagePeople, invites: pageInvites, teams: pageTeams, quotes: pageQuotes, leads: pageLeads, link: pageLink, team: pageTeam, agreement: pageAgreement };
+  const pages = { applications: pageApplications, overview: pageOwnerOverview, people: pagePeople, invites: pageInvites, teams: pageTeams, quotes: pageQuotes, leads: pageLeads, link: pageLink, team: pageTeam, agreement: pageAgreement };
   (pages[p] || pageLink)(body).catch(err => { body.innerHTML = `<div class="card"><p class="form-msg error">${esc(err.message)}</p></div>`; });
 }
 
@@ -492,6 +494,16 @@ async function pageInvites(body) {
           <td>${i.status === 'open' && !expired ? `<button class="btn-quiet" type="button" data-cancel="${i.id}">Cancel</button>` : ''}</td></tr>`;
       }).join('')}</tbody></table></div>` : '<p class="muted">No invites yet.</p>'}</div>`;
   const f = document.getElementById('invForm');
+  if (invitePrefill) {
+    f.querySelector('[name="name"]').value = invitePrefill.name;
+    f.querySelector('[name="email"]').value = invitePrefill.email;
+    if (owner && invitePrefill.role === 'lead') {
+      f.querySelector('[name="role"]').value = 'lead';
+      document.getElementById('leadOpts').hidden = false; document.getElementById('repOpts').hidden = true;
+    }
+    invitePrefill = null;
+    toast('Invite form filled in from the application');
+  }
   if (owner) f.querySelector('[name="role"]').addEventListener('change', (e) => {
     document.getElementById('leadOpts').hidden = e.target.value !== 'lead';
     document.getElementById('repOpts').hidden = e.target.value === 'lead';
@@ -606,6 +618,80 @@ async function pageTeams(body) {
       toast('Team saved'); cache = {};
     } catch (err) { toast(err.message, true); }
   }));
+}
+
+// ---------- Applications (owner) ----------
+const APP_LABELS = [
+  ['Contact', [['phone', 'Phone or WhatsApp'], ['contact_pref', 'Best way to reach'], ['timezone', 'Time zone']]],
+  ['Role and availability', [['role', 'Position'], ['hours', 'Hours per week'], ['start', 'Can start'], ['window_ok', 'Can work 2 to 4 p.m. Central']]],
+  ['Experience', [['sales_years', 'Years in sales'], ['b2b', 'Sold to businesses'], ['cold_calling', 'Cold calling'], ['food_industry', 'Restaurant or food industry'], ['english', 'English']]],
+  ['Most recent job', [['job1_employer', 'Employer'], ['job1_title', 'Title'], ['job1_dates', 'Dates'], ['job1_duties', 'What they did']]],
+  ['Previous job', [['job2_employer', 'Employer'], ['job2_title', 'Title'], ['job2_dates', 'Dates'], ['job2_duties', 'What they did']]],
+  ['Setup', [['computer', 'Computer'], ['headset', 'Headset with microphone'], ['internet', 'Reliable internet']]],
+  ['About them', [['why', 'Why they would be great'], ['profile_url', 'LinkedIn or profile'], ['heard', 'Heard about us'], ['ref', 'Referral code']]]
+];
+async function pageApplications(body) {
+  setHead('Applications', 'Everyone who applied on the careers page. Review, take notes, and invite the best fits.');
+  const d = await api('/applications');
+  const apps = d.applications;
+  if (!apps.length) { body.innerHTML = '<div class="card"><p class="muted">No applications yet. Share nightshift.watch/careers.html to start receiving them.</p></div>'; return; }
+  const counts = {}; d.statuses.forEach(s => { counts[s] = apps.filter(a => a.status === s).length; });
+  let filter = 'New';
+  if (!counts.New) filter = '';
+  function draw() {
+    const list = apps.filter(a => !filter || a.status === filter);
+    body.innerHTML = `
+      <div class="card filters app-filters">
+        <button type="button" class="chip-btn ${!filter ? 'on' : ''}" data-filter="">All (${apps.length})</button>
+        ${d.statuses.map(s => `<button type="button" class="chip-btn ${filter === s ? 'on' : ''}" data-filter="${esc(s)}">${esc(s)} (${counts[s]})</button>`).join('')}
+      </div>
+      ${list.length ? list.map(a => {
+        let x = {}; try { x = JSON.parse(a.data_json || '{}'); } catch (e) { /* ignore */ }
+        return `<div class="card app-card" data-id="${a.id}">
+          <div class="app-head">
+            <div><h2>${esc(a.name)}</h2><p class="muted small">${esc(a.role)} &middot; ${esc(a.location)}, ${esc(a.country)} &middot; applied ${esc(dateOnly(a.created_at))}</p>
+              <p class="small"><a href="mailto:${esc(a.email)}">${esc(a.email)}</a> &middot; ${esc(a.phone || '')}</p></div>
+            <div class="app-quick">
+              <span class="chip">${esc(x.sales_years || '')} in sales</span>
+              <span class="chip ${x.cold_calling === 'Yes' ? '' : 'warn'}">Cold calling: ${esc(x.cold_calling || '?')}</span>
+              <span class="chip ${x.headset === 'Yes' && x.internet === 'Yes' ? '' : 'warn'}">Setup: ${x.computer === 'Yes' && x.headset === 'Yes' && x.internet === 'Yes' ? 'ready' : 'missing items'}</span>
+            </div>
+          </div>
+          <details><summary>Full application</summary>
+            <div class="app-grid">${APP_LABELS.map(([title, rows]) => {
+              const shown = rows.filter(([k]) => x[k]);
+              return shown.length ? `<div><h4>${esc(title)}</h4><dl>${shown.map(([k, l]) => `<dt>${esc(l)}</dt><dd>${esc(x[k])}</dd>`).join('')}</dl></div>` : '';
+            }).join('')}</div>
+          </details>
+          <div class="app-actions">
+            <select class="mini-select app-status">${d.statuses.map(s => `<option ${s === a.status ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
+            <textarea class="mini-input app-notes" rows="2" placeholder="Private notes">${esc(a.review_notes || '')}</textarea>
+            <button class="btn-quiet app-save" type="button">Save</button>
+            <button class="btn-ice app-invite" type="button">Create invite</button>
+          </div>
+        </div>`;
+      }).join('') : '<div class="card"><p class="muted">No applications with this status.</p></div>'}`;
+    body.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => { filter = b.dataset.filter; draw(); }));
+    body.querySelectorAll('.app-card').forEach(card => {
+      const id = parseInt(card.dataset.id, 10);
+      const a = apps.find(x => x.id === id);
+      card.querySelector('.app-save').addEventListener('click', async (e) => {
+        const status = card.querySelector('.app-status').value, notes = card.querySelector('.app-notes').value;
+        busy(e.target, true, 'Saving');
+        try {
+          await api('/applications/update', { method: 'POST', body: { id, status, review_notes: notes } });
+          counts[a.status]--; counts[status]++; a.status = status; a.review_notes = notes;
+          toast('Application updated'); draw();
+        } catch (err) { toast(err.message, true); busy(e.target, false); }
+      });
+      card.querySelector('.app-invite').addEventListener('click', async () => {
+        try { if (a.status !== 'Invited') await api('/applications/update', { method: 'POST', body: { id, status: 'Invited' } }); } catch (e) { /* ignore */ }
+        invitePrefill = { name: a.name, email: a.email, role: /lead/i.test(a.role) ? 'lead' : 'rep' };
+        go('invites');
+      });
+    });
+  }
+  draw();
 }
 
 // ---------- Agreement ----------
