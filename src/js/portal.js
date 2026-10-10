@@ -524,7 +524,8 @@ async function pageInvites(body) {
       const r = await api('/invites', { method: 'POST', body: { role: d.role || 'rep', name: d.name, email: d.email, team_id: d.team_id, team_name: d.team_name, seat_limit: d.seat_limit, send_email: !!d.send_email, from_application: fromApplication } });
       fromApplication = false;
       const link = HERE + 'portal.html?invite=' + r.token;
-      const text = `Hi ${d.name}, here is your personal invitation to join the Night Shift team. It works once, only with this email (${d.email}), and expires in 7 days:\n${link}`;
+      const backupLink = 'https://nightshift-watch.pages.dev/portal.html?invite=' + r.token;
+      const text = `Hi ${d.name}, here is your personal invitation to join the Night Shift team. You can open it as many times as you need. It sets up one account, only with this email (${d.email}), and expires in 7 days:\n${link}\n\nIf that page does not open where you are, use this backup link instead (same invitation):\n${backupLink}`;
       const sent = r.emailed === 'sent';
       const why = { 'not verified': 'The nightshift.watch email address is not verified in Resend yet.', 'no key': 'The email key is not set up on the server.', 'failed': 'The email service did not accept it.' }[r.emailed];
       msg.className = 'form-msg ' + (r.emailed === 'off' || sent ? 'ok' : 'error');
@@ -532,9 +533,11 @@ async function pageInvites(body) {
       document.getElementById('invResult').innerHTML = `<div class="invite-result">
         <p><b>${sent ? 'Backup copy of the link.' : 'Copy this link now.'}</b> For security it is shown only once.${sent ? ' You do not need to send it; it is here in case their email does not arrive.' : ' If it gets lost, cancel it and create a new one.'}</p>
         <div class="copy-row"><input readonly value="${esc(link)}"><button class="btn-quiet" type="button" id="cpLink">Copy link</button></div>
-        <label class="field"><span>Ready-to-send message</span><textarea class="mini-input" rows="3" readonly>${esc(text)}</textarea></label>
+        <label class="field"><span>Backup link (same invite, for networks that block nightshift.watch)</span><div class="copy-row"><input readonly value="${esc(backupLink)}"><button class="btn-quiet" type="button" id="cpBackup">Copy</button></div></label>
+        <label class="field"><span>Ready-to-send message</span><textarea class="mini-input" rows="5" readonly>${esc(text)}</textarea></label>
         <button class="btn-quiet" type="button" id="cpMsg">Copy message</button></div>`;
       document.getElementById('cpLink').addEventListener('click', () => copy(link, 'Invite link copied'));
+      document.getElementById('cpBackup').addEventListener('click', () => copy(backupLink, 'Backup link copied'));
       document.getElementById('cpMsg').addEventListener('click', () => copy(text, 'Message copied'));
       f.querySelector('[name="name"]').value = ''; f.querySelector('[name="email"]').value = '';
       cache = {};
