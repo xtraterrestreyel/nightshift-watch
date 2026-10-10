@@ -7,7 +7,10 @@ import { initVisitorCounter } from './counter.js';
 
 const API = String(CONFIG.apiBaseUrl || '').replace(/\/+$/, '') + '/api/portal';
 const TOKEN_KEY = 'nightshift.portal.token';
-const SITE = location.origin + location.pathname.replace(/[^/]*$/, '');
+// Where this portal is open (used for invite links, so they work on the backup address too)
+const HERE = location.origin + location.pathname.replace(/[^/]*$/, '');
+// Referral links and QR codes always use the main address, even from the backup copy
+const SITE = /\.pages\.dev$/.test(location.hostname) ? 'https://nightshift.watch/' : HERE;
 const app = document.getElementById('app');
 const SNOW = document.getElementById('snow').innerHTML;
 
@@ -520,7 +523,7 @@ async function pageInvites(body) {
     try {
       const r = await api('/invites', { method: 'POST', body: { role: d.role || 'rep', name: d.name, email: d.email, team_id: d.team_id, team_name: d.team_name, seat_limit: d.seat_limit, send_email: !!d.send_email, from_application: fromApplication } });
       fromApplication = false;
-      const link = SITE + 'portal.html?invite=' + r.token;
+      const link = HERE + 'portal.html?invite=' + r.token;
       const text = `Hi ${d.name}, here is your personal invitation to join the Night Shift team. It works once, only with this email (${d.email}), and expires in 7 days:\n${link}`;
       const sent = r.emailed === 'sent';
       const why = { 'not verified': 'The nightshift.watch email address is not verified in Resend yet.', 'no key': 'The email key is not set up on the server.', 'failed': 'The email service did not accept it.' }[r.emailed];
