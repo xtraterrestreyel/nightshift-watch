@@ -1,11 +1,13 @@
 // Careers page: application form that sends straight to the Night Shift server.
 import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
+import { initMobileMenu } from './nav.js';
 import { makeFlakes } from './effects.js';
 import { captureRef, getRef } from './ref.js';
 import { initVisitorCounter } from './counter.js';
 
 initThemeToggle();
+initMobileMenu();
 makeFlakes();
 document.getElementById('year').textContent = new Date().getFullYear();
 

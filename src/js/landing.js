@@ -1,11 +1,13 @@
 import { CONFIG } from './config.js';
 import { initThemeToggle } from './theme.js';
+import { initMobileMenu } from './nav.js';
 import { initVisitorCounter } from './counter.js';
 import { getRef, captureRef } from './ref.js';
 import { PRICING } from './pricing.js';
 import { makeFlakes } from './effects.js';
 
 initThemeToggle();
+initMobileMenu();
 initVisitorCounter();
 
 makeFlakes();

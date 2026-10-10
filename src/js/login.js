@@ -1,9 +1,11 @@
 import { login, startDemo, getSession } from './auth.js';
 import { initThemeToggle } from './theme.js';
+import { initMobileMenu } from './nav.js';
 import { makeFlakes } from './effects.js';
 import { initVisitorCounter } from './counter.js';
 
 initThemeToggle();
+initMobileMenu();
 
 if (getSession()) window.location.replace('./dashboard.html');
 makeFlakes();

@@ -88,7 +88,30 @@ html { scroll-padding-top: calc(88px + env(safe-area-inset-top, 0px)); }
 }
 .glass .field span { font-size: 13.5px; font-weight: 500; color: var(--ink-soft); }
 
+/* Phone menu (button shows only on small screens, where the header links are hidden) */
+.menu-btn { display: none; width: 40px; height: 40px; border-radius: 12px; place-items: center; flex: none;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 60%, transparent); color: var(--ink); cursor: pointer; }
+.menu-btn svg { width: 20px; height: 20px; }
+.menu-btn path { transition: transform .2s, opacity .2s; transform-origin: 12px 12px; }
+.glass-nav.menu-open .menu-btn .l1 { transform: translateY(5px) rotate(45deg); }
+.glass-nav.menu-open .menu-btn .l2 { opacity: 0; }
+.glass-nav.menu-open .menu-btn .l3 { transform: translateY(-5px) rotate(-45deg); }
+.mobile-menu { display: grid; gap: 2px; padding: 8px 16px 14px; border-top: 1px solid var(--line); }
+.mobile-menu[hidden] { display: none; }
+.mobile-menu a { padding: 13px 6px; border-radius: 10px; color: var(--ink); text-decoration: none; font-weight: 500; font-size: 16px; }
+.mobile-menu a:active, .mobile-menu a:hover { background: color-mix(in srgb, var(--brand) 14%, transparent); }
+
 @media (max-width: 760px) {
   .nav-links a:not(.btn-m) { display: none; }
+  .nav-links { gap: 8px; }
+  .nav-links .btn-m { white-space: nowrap; padding-left: 14px; padding-right: 14px; }
+  .menu-btn { display: grid; }
   .orb { filter: blur(70px); }
+}
+@media (min-width: 761px) { .mobile-menu { display: none !important; } }
+@media (max-width: 380px) {
+  .brand-link { gap: 8px; }
+  .brand-link .mark { width: 36px; height: 36px; border-radius: 11px; }
+  .brand-link b { font-size: 15px; }
+  .nav-links .btn-m { padding-left: 11px; padding-right: 11px; }
 }
