@@ -484,7 +484,7 @@ async function pageInvites(body) {
         <label class="field"><span>Team name</span><input name="team_name" placeholder="Team 1"></label>
         <label class="field"><span>Seats (reps they can invite)</span><input name="seat_limit" type="number" min="1" max="50" value="10"></label>
       </div>` : ''}
-      <label class="check-line"><input type="checkbox" name="send_email" checked> Email the invite to them from Night Shift (replies come to ${esc(CONFIG.salesEmail || 'the company inbox')})</label>
+      <label class="check-line"><input type="checkbox" name="send_email" checked> Email the invite to them from Night Shift (sent from and replies to team@nightshift.watch)</label>
       <button class="btn-ice" type="submit">Create invite</button>
       <p class="form-msg" id="invMsg" role="status"></p>
       <div id="invResult"></div>
